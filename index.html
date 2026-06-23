@@ -661,21 +661,48 @@
       label: "Suslik BTC Wallet",
       address: "bc1qdcfqtswwnwap64gc5auz8sf3mhkwfxwl6c4lyy",
       costBasis: "",
-      stableBalance: "",
+      stableBalance: "30",
       notes: "BTC spot, без ф'ючів, без альтів."
     };
     const satsPerBtc = 100000000;
     const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
-    state.walletLabel ||= builtInWallet.label;
-    state.btcAddress ||= builtInWallet.address;
-    state.costBasis ||= builtInWallet.costBasis;
-    state.stableBalance ||= builtInWallet.stableBalance;
-    state.notes ||= builtInWallet.notes;
-    state.priceCache ||= {};
+    state.walletLabel = state.walletLabel ?? builtInWallet.label;
+    state.btcAddress = state.btcAddress ?? builtInWallet.address;
+    state.costBasis = state.costBasis ?? builtInWallet.costBasis;
+    state.stableBalance = state.stableBalance ?? builtInWallet.stableBalance;
+    state.notes = state.notes ?? builtInWallet.notes;
+    state.priceCache = state.priceCache ?? {};
     state.ownerMode = false;
     state.viewerMode = true;
 
     const $ = (id) => document.getElementById(id);
+
+    function buildStateParams(mode) {
+      const params = new URLSearchParams();
+      if (mode === "owner") {
+        params.set("owner", "1");
+      } else {
+        params.set("mode", "view");
+      }
+      if (state.btcAddress) params.set("address", state.btcAddress);
+      if (state.costBasis) params.set("cost", state.costBasis);
+      if (state.stableBalance) params.set("stables", state.stableBalance);
+      if (state.walletLabel) params.set("label", state.walletLabel);
+      if (state.notes) params.set("notes", state.notes);
+      return params;
+    }
+
+    function updateUrlState(mode) {
+      const nextHash = `#${buildStateParams(mode).toString()}`;
+      if (location.hash !== nextHash) {
+        history.replaceState(null, "", `${location.href.split("#")[0]}${nextHash}`);
+      }
+    }
+
+    function persistState(syncHash = false) {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      if (syncHash) updateUrlState(state.ownerMode ? "owner" : "view");
+    }
 
     const money = (value) => {
       const amount = Number(value) || 0;
@@ -702,8 +729,9 @@
       state.costBasis = $("costBasis").value;
       state.stableBalance = $("stableBalance").value;
       state.notes = $("notes").value.trim();
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState(Boolean(state.ownerMode));
       renderWalletIdentity();
+      renderSavedStables();
     };
 
     const load = () => {
@@ -714,6 +742,7 @@
       $("stableBalance").value = state.stableBalance;
       $("notes").value = state.notes;
       applyViewerMode();
+      if (state.ownerMode) updateUrlState("owner");
       renderWalletIdentity();
       renderEmpty();
     };
@@ -728,7 +757,7 @@
       if (params.get("notes")) state.notes = params.get("notes");
       state.ownerMode = params.get("owner") === "1";
       state.viewerMode = state.ownerMode ? false : (params.has("mode") ? params.get("mode") === "view" : true);
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState(false);
     }
 
     function applyViewerMode() {
@@ -753,6 +782,13 @@
       $("pnlUsd").className = "";
       $("txCount").textContent = "0";
       renderRows([]);
+    }
+
+    function renderSavedStables() {
+      const stables = Number(state.stableBalance) || 0;
+      const walletUsd = Number(state.lastWalletUsd) || Number(($("walletUsd").textContent || "").replace(/[^0-9.-]/g, "")) || 0;
+      $("stablesUsd").textContent = money(stables);
+      $("totalCapitalUsd").textContent = money(walletUsd + stables);
     }
 
     async function getBtcPrice() {
@@ -787,7 +823,7 @@
       const historical = Number(data.market_data && data.market_data.current_price && data.market_data.current_price.usd);
       if (!historical) throw new Error(`No historical BTC price for ${key}`);
       state.priceCache[key] = historical;
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState(false);
       return historical;
     }
 
@@ -853,6 +889,9 @@
         const avgBuyPrice = avgBasisBtc > 0 ? invested / avgBasisBtc : 0;
         const pnl = usdValue - invested;
         const txCount = (chain.tx_count || 0) + (mempool.tx_count || 0);
+        state.lastWalletUsd = usdValue;
+        state.lastSyncedAt = new Date().toISOString();
+        persistState(false);
 
         $("pricePill").textContent = `BTC ${money(price.usd)} ${price.change ? formatChange(price.change) : ""}`;
         $("updatedPill").textContent = new Date().toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
@@ -954,13 +993,7 @@
 
     async function copyShareLink() {
       save();
-      const params = new URLSearchParams();
-      params.set("mode", "view");
-      if (state.btcAddress) params.set("address", state.btcAddress);
-      if (state.costBasis) params.set("cost", state.costBasis);
-      if (state.stableBalance) params.set("stables", state.stableBalance);
-      if (state.walletLabel) params.set("label", state.walletLabel);
-      if (state.notes) params.set("notes", state.notes);
+      const params = buildStateParams("view");
       const link = `${location.href.split("#")[0]}#${params.toString()}`;
       try {
         await navigator.clipboard.writeText(link);
@@ -979,13 +1012,14 @@
     function editSetup() {
       state.ownerMode = true;
       state.viewerMode = false;
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      persistState(true);
       document.body.classList.remove("viewer-mode");
       document.body.classList.add("owner-mode");
       $("setupPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     ["walletLabel", "btcAddress", "costBasis", "stableBalance", "notes"].forEach((id) => {
+      $(id).addEventListener("input", save);
       $(id).addEventListener("change", save);
     });
     $("syncBtn").addEventListener("click", syncWallet);
