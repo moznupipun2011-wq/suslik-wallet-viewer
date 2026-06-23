@@ -514,10 +514,10 @@
   <main class="shell">
     <header class="topbar">
       <div class="brand">
-        <div class="mark" aria-hidden="true">?</div>
+        <div class="mark" aria-hidden="true">₿</div>
         <div>
           <h1>Suslik Wallet Viewer</h1>
-          <p class="sub">??????? ??????? ???????</p>
+          <p class="sub">оглядач гаманця сусліка</p>
         </div>
       </div>
       <div class="top-actions">
@@ -527,7 +527,7 @@
     </header>
 
     <div class="notice">
-      ??????? ????? ?????? ???????? BTC-??????. ?????? ?? ????? seed phrase, private key ??? 12/24 ????? ??? Trust Wallet. ?????? BTC-?????????? ???? ????? ?? ??????? ? ??????? ????????? ???? BTC ?? ???? ??????????.
+      Вводити можна тільки публічну BTC-адресу. Ніколи не вводь seed phrase, private key або 12/24 слова від Trust Wallet. Вхідні BTC-транзакції сайт рахує як покупки й показує приблизну ціну BTC на дату транзакції.
     </div>
 
     <section class="wallet-strip">
@@ -547,46 +547,46 @@
         </div>
         <div class="fields">
           <div class="field">
-            <label for="walletLabel">????? ???????</label>
+            <label for="walletLabel">Назва гаманця</label>
             <input id="walletLabel" placeholder="My BTC Trust Wallet">
           </div>
           <div class="field">
             <label for="btcAddress">BTC public address</label>
-            <input id="btcAddress" placeholder="bc1... ??? 1... ??? 3...">
+            <input id="btcAddress" placeholder="bc1... або 1... або 3...">
           </div>
           <div class="field">
-            <label for="costBasis">????? ???? ????????, $</label>
+            <label for="costBasis">Ручна сума вкладено, $</label>
             <input id="costBasis" type="number" min="0" step="0.01" placeholder="250">
           </div>
           <div class="field">
-            <label for="stableBalance">??????? ?? ?????, $</label>
+            <label for="stableBalance">Стейбли на біржі, $</label>
             <input id="stableBalance" type="number" min="0" step="0.01" placeholder="30">
           </div>
           <div class="field">
-            <label for="notes">????????</label>
-            <textarea id="notes" placeholder="?????????: BTC spot, ??? ?'????, ??? ??????."></textarea>
+            <label for="notes">Примітка</label>
+            <textarea id="notes" placeholder="Наприклад: BTC spot, без ф'ючів, без альтів."></textarea>
           </div>
         </div>
         <div class="actions">
           <button class="primary" id="syncBtn">sync wallet</button>
           <button class="ghost" id="copyLinkBtn">share link</button>
         </div>
-        <p class="status" id="statusText">????? ???????? BTC-?????? ? Trust Wallet ? ??????? sync.</p>
+        <p class="status" id="statusText">Додай публічну BTC-адресу з Trust Wallet і натисни sync.</p>
       </aside>
 
       <section>
         <div class="kpis">
           <div class="kpi">
             <strong id="balanceBtc">0 BTC</strong>
-            <span>??????</span>
+            <span>баланс</span>
           </div>
           <div class="kpi">
             <strong id="walletUsd">$0</strong>
-            <span>???????? ?????</span>
+            <span>вартість зараз</span>
           </div>
           <div class="kpi">
             <strong id="stablesUsd">$0</strong>
-            <span>???????</span>
+            <span>стейбли</span>
           </div>
           <div class="kpi">
             <strong id="totalCapitalUsd">$0</strong>
@@ -594,19 +594,19 @@
           </div>
           <div class="kpi">
             <strong id="investedUsd">$0</strong>
-            <span>????????</span>
+            <span>вкладено</span>
           </div>
           <div class="kpi">
             <strong id="avgBuyPrice">$0</strong>
-            <span>??????? ????</span>
+            <span>середня ціна</span>
           </div>
           <div class="kpi">
             <strong id="pnlUsd">$0</strong>
-            <span>???????? / ??????</span>
+            <span>прибуток / збиток</span>
           </div>
           <div class="kpi">
             <strong id="txCount">0</strong>
-            <span>??????????</span>
+            <span>транзакцій</span>
           </div>
         </div>
 
@@ -635,16 +635,16 @@
             </div>
             <div class="mini-list">
               <div class="mini">
-                <strong>??? ??????? ?? ??????</strong>
-                <span>???????? ?????? ???????? ?????? ???????? ??????????. ??????? BTC ? ??? ?????????.</span>
+                <strong>Без доступу до грошей</strong>
+                <span>Публічна адреса дозволяє тільки дивитись транзакції. Вивести BTC з неї неможливо.</span>
               </div>
               <div class="mini">
-                <strong>PNL ??????????</strong>
-                <span>???? ???? ???? BTC ?? ???? ??????? ??????????. ???? ?? ??? ?????? ??????? ??? ?????? ?????????, cost basis ????? ?????? ??????.</span>
+                <strong>PNL приблизний</strong>
+                <span>Сайт бере ціну BTC на дату вхідної транзакції. Якщо це був просто переказ між твоїми гаманцями, cost basis краще ввести вручну.</span>
               </div>
               <div class="mini">
-                <strong>??? Trust Wallet</strong>
-                <span>???? ?? ????????????? ?????? BTC receive address, ????? ???????? ????? ?????? ??????.</span>
+                <strong>Для Trust Wallet</strong>
+                <span>Якщо ти використовуєш кілька BTC receive address, треба дивитися кожну адресу окремо.</span>
               </div>
             </div>
           </aside>
@@ -662,7 +662,7 @@
       address: "bc1qdcfqtswwnwap64gc5auz8sf3mhkwfxwl6c4lyy",
       costBasis: "",
       stableBalance: "30",
-      notes: "BTC spot, ??? ?'????, ??? ??????."
+      notes: "BTC spot, без ф'ючів, без альтів."
     };
     const satsPerBtc = 100000000;
     const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -854,11 +854,11 @@
       save();
       const address = state.btcAddress;
       if (!address) {
-        setStatus("???????? ????? BTC public address.", true);
+        setStatus("Спочатку встав BTC public address.", true);
         return;
       }
 
-      setStatus("??????????? ?????? ? ???? BTC...");
+      setStatus("Синхронізую адресу і ціну BTC...");
       $("syncBtn").disabled = true;
 
       try {
@@ -907,9 +907,9 @@
         $("txStatus").textContent = `${txs.length} latest txs`;
 
         renderRows(rows);
-        setStatus("??????. ?? watch-only ???????? ????????? ??????.");
+        setStatus("Готово. Це watch-only перегляд публічної адреси.");
       } catch (error) {
-        setStatus(`?? ?????? ??????????????: ${error.message}`, true);
+        setStatus(`Не вийшло синхронізувати: ${error.message}`, true);
       } finally {
         $("syncBtn").disabled = false;
       }
@@ -997,9 +997,9 @@
       const link = `${location.href.split("#")[0]}#${params.toString()}`;
       try {
         await navigator.clipboard.writeText(link);
-        setStatus("Share link ???????????. ??? ??????? ?????? ???????? ?????? ? cost basis.");
+        setStatus("Share link скопійовано. Він містить тільки публічну адресу і cost basis.");
       } catch {
-        window.prompt("??????? share link", link);
+        window.prompt("Скопіюй share link", link);
       }
     }
 
