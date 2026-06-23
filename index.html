@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suslik Wallet Viewer</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050607;
+      --panel: #0b0d10;
+      --panel-2: #101318;
+      --panel-3: #151a20;
+      --ink: #f5efd5;
+      --muted: #8f98a3;
+      --line: #252b33;
+      --yellow: #f5c542;
+      --green: #38d98a;
+      --red: #ff5f5f;
+      --blue: #7dd3fc;
+      --shadow: 0 14px 42px rgba(0, 0, 0, .35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        linear-gradient(180deg, rgba(245, 197, 66, .08), transparent 240px),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .018) 0 1px, transparent 1px 96px),
+        var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      color: var(--ink);
+      outline: none;
+    }
+
+    input {
+      min-height: 40px;
+      padding: 0 11px;
+    }
+
+    textarea {
+      min-height: 78px;
+      padding: 10px 11px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--yellow);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .shell {
+      width: min(1320px, calc(100% - 22px));
+      margin: 0 auto;
+      padding: 12px 0 24px;
+    }
+
+    .topbar {
+      min-height: 56px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border: 1px solid var(--line);
+      background: rgba(11, 13, 16, .94);
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(245, 197, 66, .88);
+      background: var(--yellow);
+      color: #050607;
+      font-size: 22px;
+      font-weight: 950;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      font-size: clamp(22px, 2.5vw, 34px);
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      min-height: 32px;
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      color: var(--ink);
+      font-size: 12px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .notice {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: 1px solid rgba(245, 197, 66, .45);
+      background: rgba(245, 197, 66, .08);
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .wallet-strip {
+      margin-top: 10px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .wallet-strip span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .wallet-strip strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+    }
+
+    .wallet-strip code {
+      display: block;
+      margin-top: 6px;
+      max-width: 100%;
+      color: var(--yellow);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    body.viewer-mode .setup-panel,
+    body:not(.owner-mode) .owner-only {
+      display: none;
+    }
+
+    body.viewer-mode .layout {
+      grid-template-columns: 1fr;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 370px minmax(0, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+      align-items: start;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 12px;
+    }
+
+    .section-head {
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section h2 {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .fields {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .primary,
+    .ghost {
+      min-height: 38px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .primary {
+      background: var(--yellow);
+      color: #050607;
+      border: 1px solid transparent;
+    }
+
+    .primary:hover {
+      background: #ffd966;
+    }
+
+    .ghost {
+      background: #080a0c;
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+
+    .ghost:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
+
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .kpi {
+      min-height: 82px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: clamp(20px, 2.2vw, 30px);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .kpi span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .positive {
+      color: var(--green);
+    }
+
+    .negative {
+      color: var(--red);
+    }
+
+    .neutral {
+      color: var(--yellow);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .table {
+      border: 1px solid var(--line);
+      background: #080a0c;
+      overflow: hidden;
+    }
+
+    .row,
+    .head {
+      display: grid;
+      grid-template-columns: 104px 76px minmax(120px, 1fr) 96px 106px minmax(120px, 1fr) 82px;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .head {
+      min-height: 34px;
+      color: var(--muted);
+      background: #0e1114;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .row:hover {
+      background: #11100a;
+    }
+
+    .hash {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+    }
+
+    .tag {
+      min-height: 25px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .tag.in {
+      color: #050607;
+      background: var(--green);
+      border-color: var(--green);
+    }
+
+    .tag.out {
+      color: #050607;
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .tag.pending {
+      color: #050607;
+      background: var(--yellow);
+      border-color: var(--yellow);
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .mini {
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+    }
+
+    .mini strong {
+      display: block;
+      font-size: 13px;
+    }
+
+    .mini span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .status {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .footer {
+      margin-top: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    @media (max-width: 1040px) {
+      .layout,
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .top-actions,
+      .pill {
+        width: 100%;
+      }
+
+      .kpis {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .row,
+      .head {
+        grid-template-columns: 84px 68px 1fr 88px;
+      }
+
+      .row > :nth-child(5),
+      .row > :nth-child(6),
+      .row > :nth-child(7),
+      .head > :nth-child(5),
+      .head > :nth-child(6),
+      .head > :nth-child(7) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .shell {
+        width: min(100% - 14px, 1320px);
+      }
+
+      .section {
+        padding: 10px;
+      }
+
+      .kpis,
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .wallet-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">?</div>
+        <div>
+          <h1>Suslik Wallet Viewer</h1>
+          <p class="sub">??????? ??????? ???????</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="pill" id="pricePill">BTC: loading</div>
+        <div class="pill" id="updatedPill">not synced</div>
+      </div>
+    </header>
+
+    <div class="notice">
+      ??????? ????? ?????? ???????? BTC-??????. ?????? ?? ????? seed phrase, private key ??? 12/24 ????? ??? Trust Wallet. ?????? BTC-?????????? ???? ????? ?? ??????? ? ??????? ????????? ???? BTC ?? ???? ??????????.
+    </div>
+
+    <section class="wallet-strip">
+      <div>
+        <span>saved wallet</span>
+        <strong id="displayLabel">Wallet not selected</strong>
+        <code id="displayAddress">add BTC public address</code>
+      </div>
+      <button class="ghost owner-only" id="editSetupBtn">edit wallet</button>
+    </section>
+
+    <section class="layout">
+      <aside class="section setup-panel" id="setupPanel">
+        <div class="section-head">
+          <h2>Wallet setup</h2>
+          <button class="ghost" id="clearBtn">clear</button>
+        </div>
+        <div class="fields">
+          <div class="field">
+            <label for="walletLabel">????? ???????</label>
+            <input id="walletLabel" placeholder="My BTC Trust Wallet">
+          </div>
+          <div class="field">
+            <label for="btcAddress">BTC public address</label>
+            <input id="btcAddress" placeholder="bc1... ??? 1... ??? 3...">
+          </div>
+          <div class="field">
+            <label for="costBasis">????? ???? ????????, $</label>
+            <input id="costBasis" type="number" min="0" step="0.01" placeholder="250">
+          </div>
+          <div class="field">
+            <label for="stableBalance">??????? ?? ?????, $</label>
+            <input id="stableBalance" type="number" min="0" step="0.01" placeholder="30">
+          </div>
+          <div class="field">
+            <label for="notes">????????</label>
+            <textarea id="notes" placeholder="?????????: BTC spot, ??? ?'????, ??? ??????."></textarea>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="primary" id="syncBtn">sync wallet</button>
+          <button class="ghost" id="copyLinkBtn">share link</button>
+        </div>
+        <p class="status" id="statusText">????? ???????? BTC-?????? ? Trust Wallet ? ??????? sync.</p>
+      </aside>
+
+      <section>
+        <div class="kpis">
+          <div class="kpi">
+            <strong id="balanceBtc">0 BTC</strong>
+            <span>??????</span>
+          </div>
+          <div class="kpi">
+            <strong id="walletUsd">$0</strong>
+            <span>???????? ?????</span>
+          </div>
+          <div class="kpi">
+            <strong id="stablesUsd">$0</strong>
+            <span>???????</span>
+          </div>
+          <div class="kpi">
+            <strong id="totalCapitalUsd">$0</strong>
+            <span>total capital</span>
+          </div>
+          <div class="kpi">
+            <strong id="investedUsd">$0</strong>
+            <span>????????</span>
+          </div>
+          <div class="kpi">
+            <strong id="avgBuyPrice">$0</strong>
+            <span>??????? ????</span>
+          </div>
+          <div class="kpi">
+            <strong id="pnlUsd">$0</strong>
+            <span>???????? / ??????</span>
+          </div>
+          <div class="kpi">
+            <strong id="txCount">0</strong>
+            <span>??????????</span>
+          </div>
+        </div>
+
+        <div class="split">
+          <section class="section">
+            <div class="section-head">
+              <h2>Transactions</h2>
+              <span class="status" id="txStatus">latest 25 BTC txs</span>
+            </div>
+            <div class="table" id="txTable">
+              <div class="head">
+                <span>date</span>
+                <span>type</span>
+                <span>amount</span>
+                <span>price then</span>
+                <span>value then</span>
+                <span>tx hash</span>
+                <span>status</span>
+              </div>
+            </div>
+          </section>
+
+          <aside class="section">
+            <div class="section-head">
+              <h2>Read-only rules</h2>
+            </div>
+            <div class="mini-list">
+              <div class="mini">
+                <strong>??? ??????? ?? ??????</strong>
+                <span>???????? ?????? ???????? ?????? ???????? ??????????. ??????? BTC ? ??? ?????????.</span>
+              </div>
+              <div class="mini">
+                <strong>PNL ??????????</strong>
+                <span>???? ???? ???? BTC ?? ???? ??????? ??????????. ???? ?? ??? ?????? ??????? ??? ?????? ?????????, cost basis ????? ?????? ??????.</span>
+              </div>
+              <div class="mini">
+                <strong>??? Trust Wallet</strong>
+                <span>???? ?? ????????????? ?????? BTC receive address, ????? ???????? ????? ?????? ??????.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </section>
+
+    <div class="footer">Data sources: mempool.space for BTC address data, CoinGecko for BTC price. Watch-only wallet viewer, not financial advice.</div>
+  </main>
+
+  <script>
+    const storageKey = "suslikWalletViewer";
+    const builtInWallet = {
+      label: "Suslik BTC Wallet",
+      address: "bc1qdcfqtswwnwap64gc5auz8sf3mhkwfxwl6c4lyy",
+      costBasis: "",
+      stableBalance: "30",
+      notes: "BTC spot, ??? ?'????, ??? ??????."
+    };
+    const satsPerBtc = 100000000;
+    const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    state.walletLabel = state.walletLabel ?? builtInWallet.label;
+    state.btcAddress = state.btcAddress ?? builtInWallet.address;
+    state.costBasis = state.costBasis ?? builtInWallet.costBasis;
+    state.stableBalance = state.stableBalance ?? builtInWallet.stableBalance;
+    state.notes = state.notes ?? builtInWallet.notes;
+    state.priceCache = state.priceCache ?? {};
+    state.ownerMode = false;
+    state.viewerMode = true;
+
+    const $ = (id) => document.getElementById(id);
+
+    function buildStateParams(mode) {
+      const params = new URLSearchParams();
+      if (mode === "owner") {
+        params.set("owner", "1");
+      } else {
+        params.set("mode", "view");
+      }
+      if (state.btcAddress) params.set("address", state.btcAddress);
+      if (state.costBasis) params.set("cost", state.costBasis);
+      if (state.stableBalance) params.set("stables", state.stableBalance);
+      if (state.walletLabel) params.set("label", state.walletLabel);
+      if (state.notes) params.set("notes", state.notes);
+      return params;
+    }
+
+    function updateUrlState(mode) {
+      const nextHash = `#${buildStateParams(mode).toString()}`;
+      if (location.hash !== nextHash) {
+        history.replaceState(null, "", `${location.href.split("#")[0]}${nextHash}`);
+      }
+    }
+
+    function persistState(syncHash = false) {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      if (syncHash) updateUrlState(state.ownerMode ? "owner" : "view");
+    }
+
+    const money = (value) => {
+      const amount = Number(value) || 0;
+      const sign = amount < 0 ? "-" : "";
+      return `${sign}$${Math.abs(amount).toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+    };
+
+    const btc = (sats) => {
+      const amount = (Number(sats) || 0) / satsPerBtc;
+      return `${amount.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 8 })} BTC`;
+    };
+
+    const dateKey = (date) => {
+      if (!date) return "";
+      const day = String(date.getUTCDate()).padStart(2, "0");
+      const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+      const year = date.getUTCFullYear();
+      return `${day}-${month}-${year}`;
+    };
+
+    const save = () => {
+      state.walletLabel = $("walletLabel").value.trim();
+      state.btcAddress = $("btcAddress").value.trim();
+      state.costBasis = $("costBasis").value;
+      state.stableBalance = $("stableBalance").value;
+      state.notes = $("notes").value.trim();
+      persistState(Boolean(state.ownerMode));
+      renderWalletIdentity();
+      renderSavedStables();
+    };
+
+    const load = () => {
+      applyHashConfig();
+      $("walletLabel").value = state.walletLabel;
+      $("btcAddress").value = state.btcAddress;
+      $("costBasis").value = state.costBasis;
+      $("stableBalance").value = state.stableBalance;
+      $("notes").value = state.notes;
+      applyViewerMode();
+      if (state.ownerMode) updateUrlState("owner");
+      renderWalletIdentity();
+      renderEmpty();
+    };
+
+    function applyHashConfig() {
+      if (!location.hash || location.hash.length < 2) return;
+      const params = new URLSearchParams(location.hash.slice(1));
+      if (params.get("address")) state.btcAddress = params.get("address");
+      if (params.get("cost")) state.costBasis = params.get("cost");
+      if (params.get("stables")) state.stableBalance = params.get("stables");
+      if (params.get("label")) state.walletLabel = params.get("label");
+      if (params.get("notes")) state.notes = params.get("notes");
+      state.ownerMode = params.get("owner") === "1";
+      state.viewerMode = state.ownerMode ? false : (params.has("mode") ? params.get("mode") === "view" : true);
+      persistState(false);
+    }
+
+    function applyViewerMode() {
+      document.body.classList.toggle("owner-mode", Boolean(state.ownerMode));
+      document.body.classList.toggle("viewer-mode", Boolean(!state.ownerMode && state.viewerMode && state.btcAddress));
+    }
+
+    function renderWalletIdentity() {
+      $("displayLabel").textContent = state.walletLabel || "BTC Trust Wallet";
+      $("displayAddress").textContent = state.btcAddress || "add BTC public address";
+    }
+
+    function renderEmpty() {
+      const stables = Number(state.stableBalance) || 0;
+      $("balanceBtc").textContent = "0 BTC";
+      $("walletUsd").textContent = "$0";
+      $("stablesUsd").textContent = money(stables);
+      $("totalCapitalUsd").textContent = money(stables);
+      $("investedUsd").textContent = money(Number(state.costBasis) || 0);
+      $("avgBuyPrice").textContent = "$0";
+      $("pnlUsd").textContent = "$0";
+      $("pnlUsd").className = "";
+      $("txCount").textContent = "0";
+      renderRows([]);
+    }
+
+    function renderSavedStables() {
+      const stables = Number(state.stableBalance) || 0;
+      const walletUsd = Number(state.lastWalletUsd) || Number(($("walletUsd").textContent || "").replace(/[^0-9.-]/g, "")) || 0;
+      $("stablesUsd").textContent = money(stables);
+      $("totalCapitalUsd").textContent = money(walletUsd + stables);
+    }
+
+    async function getBtcPrice() {
+      try {
+        const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true";
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("CoinGecko price request failed");
+        const data = await response.json();
+        return {
+          usd: Number(data.bitcoin.usd),
+          change: Number(data.bitcoin.usd_24h_change || 0)
+        };
+      } catch {
+        const fallback = await fetch("https://mempool.space/api/v1/prices");
+        if (!fallback.ok) throw new Error("Price request failed");
+        const data = await fallback.json();
+        return { usd: Number(data.USD), change: 0 };
+      }
+    }
+
+    async function getHistoricalBtcPrice(date, currentPrice) {
+      if (!date) return currentPrice;
+      const key = dateKey(date);
+      const today = dateKey(new Date());
+      if (!key || key === today) return currentPrice;
+      if (state.priceCache[key]) return Number(state.priceCache[key]);
+
+      const url = `https://api.coingecko.com/api/v3/coins/bitcoin/history?date=${key}&localization=false`;
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Historical price error ${response.status}`);
+      const data = await response.json();
+      const historical = Number(data.market_data && data.market_data.current_price && data.market_data.current_price.usd);
+      if (!historical) throw new Error(`No historical BTC price for ${key}`);
+      state.priceCache[key] = historical;
+      persistState(false);
+      return historical;
+    }
+
+    async function enrichTransactions(rows, currentPrice) {
+      const priceByDate = {};
+      const uniqueDates = [...new Set(rows.filter((tx) => tx.date).map((tx) => dateKey(tx.date)))];
+      await Promise.all(uniqueDates.map(async (key) => {
+        const [day, month, year] = key.split("-").map(Number);
+        const date = new Date(Date.UTC(year, month - 1, day));
+        try {
+          priceByDate[key] = await getHistoricalBtcPrice(date, currentPrice);
+        } catch {
+          priceByDate[key] = currentPrice;
+        }
+      }));
+
+      return rows.map((tx) => {
+        const priceAtTx = tx.date ? priceByDate[dateKey(tx.date)] : currentPrice;
+        return {
+          ...tx,
+          priceAtTx,
+          usdAtTx: (tx.net / satsPerBtc) * priceAtTx
+        };
+      });
+    }
+
+    async function syncWallet() {
+      save();
+      const address = state.btcAddress;
+      if (!address) {
+        setStatus("???????? ????? BTC public address.", true);
+        return;
+      }
+
+      setStatus("??????????? ?????? ? ???? BTC...");
+      $("syncBtn").disabled = true;
+
+      try {
+        const [price, addressData, txs] = await Promise.all([
+          getBtcPrice(),
+          fetchJson(`https://mempool.space/api/address/${encodeURIComponent(address)}`),
+          fetchJson(`https://mempool.space/api/address/${encodeURIComponent(address)}/txs`)
+        ]);
+
+        const chain = addressData.chain_stats || {};
+        const mempool = addressData.mempool_stats || {};
+        const funded = (chain.funded_txo_sum || 0) + (mempool.funded_txo_sum || 0);
+        const spent = (chain.spent_txo_sum || 0) + (mempool.spent_txo_sum || 0);
+        const balanceSats = funded - spent;
+        const usdValue = (balanceSats / satsPerBtc) * price.usd;
+        const rows = await enrichTransactions(txs.map((tx) => normalizeTx(tx, address)), price.usd);
+        const autoInvested = rows.reduce((sum, tx) => (
+          tx.net > 0 ? sum + Math.abs(tx.usdAtTx || 0) : sum
+        ), 0);
+        const autoBoughtSats = rows.reduce((sum, tx) => (
+          tx.net > 0 ? sum + Math.abs(tx.net || 0) : sum
+        ), 0);
+        const manualInvested = Number(state.costBasis) || 0;
+        const invested = manualInvested || autoInvested;
+        const stables = Number(state.stableBalance) || 0;
+        const totalCapital = usdValue + stables;
+        const avgBasisBtc = manualInvested ? (balanceSats / satsPerBtc) : (autoBoughtSats / satsPerBtc);
+        const avgBuyPrice = avgBasisBtc > 0 ? invested / avgBasisBtc : 0;
+        const pnl = usdValue - invested;
+        const txCount = (chain.tx_count || 0) + (mempool.tx_count || 0);
+        state.lastWalletUsd = usdValue;
+        state.lastSyncedAt = new Date().toISOString();
+        persistState(false);
+
+        $("pricePill").textContent = `BTC ${money(price.usd)} ${price.change ? formatChange(price.change) : ""}`;
+        $("updatedPill").textContent = new Date().toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+        $("balanceBtc").textContent = btc(balanceSats);
+        $("walletUsd").textContent = money(usdValue);
+        $("stablesUsd").textContent = money(stables);
+        $("totalCapitalUsd").textContent = money(totalCapital);
+        $("investedUsd").textContent = money(invested);
+        $("avgBuyPrice").textContent = money(avgBuyPrice);
+        $("pnlUsd").textContent = money(pnl);
+        $("pnlUsd").className = pnl > 0 ? "positive" : pnl < 0 ? "negative" : "neutral";
+        $("txCount").textContent = txCount;
+        $("txStatus").textContent = `${txs.length} latest txs`;
+
+        renderRows(rows);
+        setStatus("??????. ?? watch-only ???????? ????????? ??????.");
+      } catch (error) {
+        setStatus(`?? ?????? ??????????????: ${error.message}`, true);
+      } finally {
+        $("syncBtn").disabled = false;
+      }
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`API error ${response.status}`);
+      return response.json();
+    }
+
+    function normalizeTx(tx, address) {
+      const received = tx.vout.reduce((sum, output) => (
+        output.scriptpubkey_address === address ? sum + (output.value || 0) : sum
+      ), 0);
+      const sent = tx.vin.reduce((sum, input) => (
+        input.prevout && input.prevout.scriptpubkey_address === address ? sum + (input.prevout.value || 0) : sum
+      ), 0);
+      const net = received - sent;
+      const confirmed = Boolean(tx.status && tx.status.confirmed);
+      return {
+        date: confirmed && tx.status.block_time ? new Date(tx.status.block_time * 1000) : null,
+        type: net >= 0 ? "receive" : "send",
+        net,
+        txid: tx.txid,
+        confirmed
+      };
+    }
+
+    function renderRows(rows) {
+      const table = $("txTable");
+      table.innerHTML = `
+        <div class="head">
+          <span>date</span>
+          <span>type</span>
+          <span>amount</span>
+          <span>price then</span>
+          <span>value then</span>
+          <span>tx hash</span>
+          <span>status</span>
+        </div>
+      `;
+
+      if (!rows.length) {
+        const empty = document.createElement("div");
+        empty.className = "row";
+        empty.innerHTML = "<span>no data</span><span>-</span><span>-</span><span>-</span><span>-</span><span class=\"hash\">add address and sync</span><span>-</span>";
+        table.appendChild(empty);
+        return;
+      }
+
+      rows.forEach((tx) => {
+        const row = document.createElement("a");
+        row.className = "row";
+        row.href = `https://mempool.space/tx/${tx.txid}`;
+        row.target = "_blank";
+        row.rel = "noreferrer";
+        const tagClass = tx.confirmed ? (tx.type === "receive" ? "in" : "out") : "pending";
+        row.innerHTML = `
+          <span>${tx.date ? tx.date.toLocaleDateString("uk-UA") : "pending"}</span>
+          <span><span class="tag ${tagClass}">${tx.type}</span></span>
+          <span class="${tx.net >= 0 ? "positive" : "negative"}">${tx.net >= 0 ? "+" : ""}${btc(tx.net)}</span>
+          <span>${tx.priceAtTx ? money(tx.priceAtTx) : "-"}</span>
+          <span class="${tx.usdAtTx >= 0 ? "positive" : "negative"}">${tx.usdAtTx >= 0 ? "+" : ""}${money(tx.usdAtTx || 0)}</span>
+          <span class="hash">${tx.txid}</span>
+          <span>${tx.confirmed ? "confirmed" : "pending"}</span>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    function formatChange(value) {
+      const sign = value >= 0 ? "+" : "";
+      return `(${sign}${value.toFixed(2)}%)`;
+    }
+
+    function setStatus(text, isError = false) {
+      $("statusText").textContent = text;
+      $("statusText").className = `status ${isError ? "negative" : ""}`;
+    }
+
+    async function copyShareLink() {
+      save();
+      const params = buildStateParams("view");
+      const link = `${location.href.split("#")[0]}#${params.toString()}`;
+      try {
+        await navigator.clipboard.writeText(link);
+        setStatus("Share link ???????????. ??? ??????? ?????? ???????? ?????? ? cost basis.");
+      } catch {
+        window.prompt("??????? share link", link);
+      }
+    }
+
+    function clearAll() {
+      localStorage.removeItem(storageKey);
+      location.hash = "";
+      location.reload();
+    }
+
+    function editSetup() {
+      state.ownerMode = true;
+      state.viewerMode = false;
+      persistState(true);
+      document.body.classList.remove("viewer-mode");
+      document.body.classList.add("owner-mode");
+      $("setupPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    ["walletLabel", "btcAddress", "costBasis", "stableBalance", "notes"].forEach((id) => {
+      $(id).addEventListener("input", save);
+      $(id).addEventListener("change", save);
+    });
+    $("syncBtn").addEventListener("click", syncWallet);
+    $("copyLinkBtn").addEventListener("click", copyShareLink);
+    $("clearBtn").addEventListener("click", clearAll);
+    $("editSetupBtn").addEventListener("click", editSetup);
+    window.addEventListener("hashchange", () => location.reload());
+
+    load();
+    if (state.btcAddress) syncWallet();
+  </script>
+</body>
+</html>
