@@ -322,6 +322,201 @@
       text-transform: uppercase;
     }
 
+    .pnl-panel {
+      margin-bottom: 10px;
+    }
+
+    .performance-panel {
+      margin-bottom: 10px;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: 1.15fr repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .performance-card {
+      min-height: 78px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+    }
+
+    .performance-card.main {
+      background: linear-gradient(135deg, rgba(245, 197, 66, .16), #080a0c 58%);
+      border-color: rgba(245, 197, 66, .42);
+    }
+
+    .performance-card span,
+    .performance-card small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .performance-card strong {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(20px, 2.1vw, 30px);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .performance-card small {
+      margin-top: 6px;
+      text-transform: none;
+    }
+
+    .performance-bars {
+      display: grid;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .performance-bar {
+      display: grid;
+      grid-template-columns: 94px minmax(0, 1fr) 92px;
+      gap: 8px;
+      align-items: center;
+      min-height: 28px;
+      font-size: 11px;
+    }
+
+    .performance-bar label {
+      font-size: 10px;
+    }
+
+    .performance-bar strong {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .pnl-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pnl-tab {
+      min-height: 30px;
+      padding: 0 10px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .pnl-tab.active {
+      border-color: var(--yellow);
+      background: rgba(245, 197, 66, .14);
+      color: var(--yellow);
+    }
+
+    .pnl-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .pnl-manual {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px;
+      gap: 8px;
+      align-items: end;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .pnl-card {
+      min-height: 74px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+    }
+
+    .pnl-card span,
+    .pnl-card small {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.3;
+      text-transform: uppercase;
+    }
+
+    .pnl-card strong {
+      display: block;
+      margin-top: 6px;
+      font-size: clamp(19px, 2vw, 27px);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .pnl-card small {
+      margin-top: 6px;
+      text-transform: none;
+    }
+
+    .pnl-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .pnl-row {
+      display: grid;
+      grid-template-columns: 92px minmax(0, 1fr) 92px;
+      gap: 8px;
+      align-items: center;
+      min-height: 36px;
+      padding: 7px 9px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      font-size: 12px;
+    }
+
+    .pnl-date {
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .pnl-value {
+      text-align: right;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .pnl-bar-track {
+      height: 8px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      overflow: hidden;
+    }
+
+    .pnl-bar {
+      display: block;
+      width: 0%;
+      height: 100%;
+      background: var(--green);
+    }
+
+    .pnl-bar.down {
+      background: var(--red);
+    }
+
     .positive {
       color: var(--green);
     }
@@ -336,7 +531,7 @@
 
     .split {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 300px;
+      grid-template-columns: 1fr;
       gap: 10px;
       align-items: start;
     }
@@ -475,6 +670,14 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      .pnl-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .performance-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
       .row,
       .head {
         grid-template-columns: 84px 68px 1fr 88px;
@@ -502,6 +705,22 @@
       .kpis,
       .actions {
         grid-template-columns: 1fr;
+      }
+
+      .pnl-row {
+        grid-template-columns: 80px minmax(0, 1fr) 82px;
+      }
+
+      .pnl-manual {
+        grid-template-columns: 1fr;
+      }
+
+      .performance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .performance-bar {
+        grid-template-columns: 78px minmax(0, 1fr) 78px;
       }
 
       .wallet-strip {
@@ -610,6 +829,77 @@
           </div>
         </div>
 
+        <section class="section performance-panel">
+          <div class="section-head">
+            <h2>Performance</h2>
+            <span class="status" id="performanceMeta">live</span>
+          </div>
+          <div class="performance-grid">
+            <div class="performance-card main">
+              <span>net result</span>
+              <strong id="dashNet">$0</strong>
+              <small>BTC PNL + month earned</small>
+            </div>
+            <div class="performance-card">
+              <span>BTC PNL</span>
+              <strong id="dashBtcPnl">$0</strong>
+              <small>separate from stables</small>
+            </div>
+            <div class="performance-card">
+              <span>earned stables</span>
+              <strong id="dashEarned">$0</strong>
+              <small>this month</small>
+            </div>
+            <div class="performance-card">
+              <span>avg entry</span>
+              <strong id="dashAvgEntry">$0</strong>
+              <small>BTC average price</small>
+            </div>
+          </div>
+          <div class="performance-bars">
+            <div class="performance-bar">
+              <label>BTC</label>
+              <span class="pnl-bar-track"><i class="pnl-bar" id="barBtc" style="width: 0%"></i></span>
+              <strong id="barBtcValue">$0</strong>
+            </div>
+            <div class="performance-bar">
+              <label>STABLES</label>
+              <span class="pnl-bar-track"><i class="pnl-bar" id="barEarned" style="width: 0%"></i></span>
+              <strong id="barEarnedValue">$0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="section pnl-panel">
+          <div class="section-head">
+            <h2>Stable Income</h2>
+            <div class="pnl-tabs">
+              <button class="pnl-tab active" id="pnlDailyBtn" type="button">daily</button>
+              <button class="pnl-tab" id="pnlMonthlyBtn" type="button">monthly</button>
+            </div>
+          </div>
+          <div class="pnl-grid">
+            <div class="pnl-card">
+              <span>today earned</span>
+              <strong id="todayPnl">$0</strong>
+              <small id="todayPnlMeta">stable deposits today</small>
+            </div>
+            <div class="pnl-card">
+              <span>month earned</span>
+              <strong id="monthPnl">$0</strong>
+              <small id="monthPnlMeta">stable deposits this month</small>
+            </div>
+          </div>
+          <div class="pnl-manual owner-only">
+            <div class="field">
+              <label for="manualPnl">stable deposit, $</label>
+              <input id="manualPnl" type="number" step="0.01" placeholder="+12 or -5">
+            </div>
+            <button class="ghost" id="manualPnlBtn" type="button">add</button>
+          </div>
+          <div class="pnl-list" id="pnlHistory"></div>
+        </section>
+
         <div class="split">
           <section class="section">
             <div class="section-head">
@@ -629,25 +919,6 @@
             </div>
           </section>
 
-          <aside class="section">
-            <div class="section-head">
-              <h2>Read-only rules</h2>
-            </div>
-            <div class="mini-list">
-              <div class="mini">
-                <strong>Без доступу до грошей</strong>
-                <span>Публічна адреса дозволяє тільки дивитись транзакції. Вивести BTC з неї неможливо.</span>
-              </div>
-              <div class="mini">
-                <strong>PNL приблизний</strong>
-                <span>Сайт бере ціну BTC на дату вхідної транзакції. Якщо це був просто переказ між твоїми гаманцями, cost basis краще ввести вручну.</span>
-              </div>
-              <div class="mini">
-                <strong>Для Trust Wallet</strong>
-                <span>Якщо ти використовуєш кілька BTC receive address, треба дивитися кожну адресу окремо.</span>
-              </div>
-            </div>
-          </aside>
         </div>
       </section>
     </section>
@@ -657,6 +928,11 @@
 
   <script>
     const storageKey = "suslikWalletViewer";
+    const dbEndpoint = "https://jsonblob.com/api/jsonBlob/019ef62f-6f8f-7d40-995d-9e140afc6a42";
+    const ownerKeyHash = "f276391c7c0e24ca517df8c851354d35d9439b8e63adf6f52d0f552b9a278977";
+    let dbSaveTimer = null;
+    let stableIncomeTimer = null;
+    let dbReady = false;
     const builtInWallet = {
       label: "Suslik BTC Wallet",
       address: "bc1qdcfqtswwnwap64gc5auz8sf3mhkwfxwl6c4lyy",
@@ -672,23 +948,34 @@
     state.stableBalance = state.stableBalance ?? builtInWallet.stableBalance;
     state.notes = state.notes ?? builtInWallet.notes;
     state.priceCache = state.priceCache ?? {};
+    state.pnlSnapshots = Array.isArray(state.pnlSnapshots) ? state.pnlSnapshots : [];
+    state.incomeEntries = Array.isArray(state.incomeEntries) ? state.incomeEntries : [];
+    state.lastStableBalanceForIncome = state.lastStableBalanceForIncome ?? state.stableBalance;
+    state.pnlMode = state.pnlMode || "daily";
     state.ownerMode = false;
     state.viewerMode = true;
 
     const $ = (id) => document.getElementById(id);
 
+    function getOwnerKey() {
+      const params = location.hash && location.hash.length > 1 ? new URLSearchParams(location.hash.slice(1)) : new URLSearchParams();
+      return params.get("key") || localStorage.getItem(`${storageKey}:ownerKey`) || "";
+    }
+
     function buildStateParams(mode) {
       const params = new URLSearchParams();
       if (mode === "owner") {
         params.set("owner", "1");
+        const ownerKey = getOwnerKey();
+        if (ownerKey) params.set("key", ownerKey);
+        if (state.btcAddress) params.set("address", state.btcAddress);
+        if (state.costBasis) params.set("cost", state.costBasis);
+        if (state.stableBalance) params.set("stables", state.stableBalance);
+        if (state.walletLabel) params.set("label", state.walletLabel);
+        if (state.notes) params.set("notes", state.notes);
       } else {
         params.set("mode", "view");
       }
-      if (state.btcAddress) params.set("address", state.btcAddress);
-      if (state.costBasis) params.set("cost", state.costBasis);
-      if (state.stableBalance) params.set("stables", state.stableBalance);
-      if (state.walletLabel) params.set("label", state.walletLabel);
-      if (state.notes) params.set("notes", state.notes);
       return params;
     }
 
@@ -704,10 +991,123 @@
       if (syncHash) updateUrlState(state.ownerMode ? "owner" : "view");
     }
 
+    function setDbStatus(label, meta, isError = false) {
+      if (!$("dbState") || !$("dbMeta")) return;
+      $("dbState").textContent = label;
+      $("dbState").className = isError ? "negative" : label === "saved" || label === "online" ? "positive" : "neutral";
+      $("dbMeta").textContent = meta;
+    }
+
+    async function sha256Hex(value) {
+      const encoded = new TextEncoder().encode(value);
+      const hash = await crypto.subtle.digest("SHA-256", encoded);
+      return Array.from(new Uint8Array(hash)).map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function hasOwnerAccess() {
+      const key = getOwnerKey();
+      if (!key) return false;
+      return await sha256Hex(key) === ownerKeyHash;
+    }
+
+    function databasePayload() {
+      return {
+        version: 1,
+        walletLabel: state.walletLabel,
+        btcAddress: state.btcAddress,
+        costBasis: state.costBasis,
+        stableBalance: state.stableBalance,
+        notes: state.notes,
+        pnlSnapshots: state.pnlSnapshots,
+        incomeEntries: state.incomeEntries,
+        lastStableBalanceForIncome: state.lastStableBalanceForIncome,
+        lastWalletUsd: state.lastWalletUsd || 0,
+        lastTotalCapital: state.lastTotalCapital || 0,
+        lastBtcPnl: state.lastBtcPnl || 0,
+        lastAvgBuyPrice: state.lastAvgBuyPrice || 0,
+        lastInvested: state.lastInvested || 0,
+        lastSyncedAt: state.lastSyncedAt || "",
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    function applyDatabasePayload(data) {
+      if (!data || typeof data !== "object") return;
+      if (data.walletLabel !== undefined) state.walletLabel = String(data.walletLabel || builtInWallet.label);
+      if (data.btcAddress !== undefined) state.btcAddress = String(data.btcAddress || builtInWallet.address);
+      if (data.costBasis !== undefined) state.costBasis = String(data.costBasis || "");
+      if (data.stableBalance !== undefined) state.stableBalance = String(data.stableBalance || "0");
+      if (data.notes !== undefined) state.notes = String(data.notes || "");
+      if (Array.isArray(data.pnlSnapshots)) state.pnlSnapshots = data.pnlSnapshots;
+      if (Array.isArray(data.incomeEntries)) state.incomeEntries = data.incomeEntries;
+      if (data.lastStableBalanceForIncome !== undefined) state.lastStableBalanceForIncome = String(data.lastStableBalanceForIncome || "0");
+      state.lastWalletUsd = Number(data.lastWalletUsd) || state.lastWalletUsd || 0;
+      state.lastTotalCapital = Number(data.lastTotalCapital) || state.lastTotalCapital || 0;
+      state.lastBtcPnl = Number(data.lastBtcPnl) || state.lastBtcPnl || 0;
+      state.lastAvgBuyPrice = Number(data.lastAvgBuyPrice) || state.lastAvgBuyPrice || 0;
+      state.lastInvested = Number(data.lastInvested) || state.lastInvested || 0;
+      state.lastSyncedAt = data.lastSyncedAt || state.lastSyncedAt || "";
+    }
+
+    async function loadDatabaseState() {
+      setDbStatus("loading", "reading database");
+      try {
+        const response = await fetch(`${dbEndpoint}?cache=${Date.now()}`, {
+          headers: { "Accept": "application/json" },
+          cache: "no-store"
+        });
+        if (!response.ok) throw new Error(`database ${response.status}`);
+        const data = await response.json();
+        applyDatabasePayload(data);
+        dbReady = true;
+        persistState(false);
+        setDbStatus("online", data.updatedAt ? `updated ${new Date(data.updatedAt).toLocaleString("uk-UA")}` : "database loaded");
+      } catch (error) {
+        dbReady = false;
+        setDbStatus("local", `database unavailable: ${error.message}`, true);
+      }
+    }
+
+    async function saveDatabaseState() {
+      if (!state.ownerMode) return;
+      if (!(await hasOwnerAccess())) {
+        setDbStatus("locked", "owner key missing", true);
+        return;
+      }
+      try {
+        const response = await fetch(dbEndpoint, {
+          method: "PUT",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(databasePayload())
+        });
+        if (!response.ok) throw new Error(`database ${response.status}`);
+        dbReady = true;
+        setDbStatus("saved", new Date().toLocaleString("uk-UA"));
+      } catch (error) {
+        setDbStatus("error", error.message, true);
+      }
+    }
+
+    function queueDatabaseSave() {
+      if (!state.ownerMode) return;
+      clearTimeout(dbSaveTimer);
+      dbSaveTimer = setTimeout(() => {
+        saveDatabaseState();
+      }, 700);
+    }
+
     const money = (value) => {
       const amount = Number(value) || 0;
       const sign = amount < 0 ? "-" : "";
       return `${sign}$${Math.abs(amount).toLocaleString("en-US", { maximumFractionDigits: 2 })}`;
+    };
+
+    const signedMoney = (value) => {
+      const amount = Number(value) || 0;
+      return `${amount > 0 ? "+" : ""}${money(amount)}`;
     };
 
     const btc = (sats) => {
@@ -732,15 +1132,21 @@
       persistState(Boolean(state.ownerMode));
       renderWalletIdentity();
       renderSavedStables();
+      queueDatabaseSave();
+      queueStableIncomeDetection();
     };
 
-    const load = () => {
-      applyHashConfig();
+    function hydrateFields() {
       $("walletLabel").value = state.walletLabel;
       $("btcAddress").value = state.btcAddress;
       $("costBasis").value = state.costBasis;
       $("stableBalance").value = state.stableBalance;
       $("notes").value = state.notes;
+    }
+
+    const load = () => {
+      applyHashConfig();
+      hydrateFields();
       applyViewerMode();
       if (state.ownerMode) updateUrlState("owner");
       renderWalletIdentity();
@@ -755,6 +1161,7 @@
       if (params.get("stables")) state.stableBalance = params.get("stables");
       if (params.get("label")) state.walletLabel = params.get("label");
       if (params.get("notes")) state.notes = params.get("notes");
+      if (params.get("key")) localStorage.setItem(`${storageKey}:ownerKey`, params.get("key"));
       state.ownerMode = params.get("owner") === "1";
       state.viewerMode = state.ownerMode ? false : (params.has("mode") ? params.get("mode") === "view" : true);
       persistState(false);
@@ -781,14 +1188,319 @@
       $("pnlUsd").textContent = "$0";
       $("pnlUsd").className = "";
       $("txCount").textContent = "0";
+      renderPnlPanel(stables);
       renderRows([]);
     }
 
     function renderSavedStables() {
       const stables = Number(state.stableBalance) || 0;
       const walletUsd = Number(state.lastWalletUsd) || Number(($("walletUsd").textContent || "").replace(/[^0-9.-]/g, "")) || 0;
+      state.lastTotalCapital = walletUsd + stables;
       $("stablesUsd").textContent = money(stables);
-      $("totalCapitalUsd").textContent = money(walletUsd + stables);
+      $("totalCapitalUsd").textContent = money(state.lastTotalCapital);
+      renderPnlPanel(state.lastTotalCapital);
+    }
+
+    function localDay(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function localMonth(date = new Date()) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      return `${year}-${month}`;
+    }
+
+    function formatDayLabel(day) {
+      const [, month, date] = day.split("-");
+      return `${date}.${month}`;
+    }
+
+    function formatMonthLabel(month) {
+      const [year, value] = month.split("-");
+      return `${value}.${year.slice(2)}`;
+    }
+
+    function normalizeIncomeEntries() {
+      state.incomeEntries = (Array.isArray(state.incomeEntries) ? state.incomeEntries : [])
+        .filter((entry) => entry && entry.day && Number.isFinite(Number(entry.amount)))
+        .map((entry) => ({
+          id: entry.id || `${entry.day}-${Math.random().toString(16).slice(2)}`,
+          day: entry.day,
+          month: entry.month || entry.day.slice(0, 7),
+          amount: Number(entry.amount) || 0,
+          source: entry.source || "manual",
+          note: entry.note || "",
+          createdAt: entry.createdAt || ""
+        }))
+        .sort((a, b) => a.day.localeCompare(b.day) || a.id.localeCompare(b.id))
+        .slice(-500);
+    }
+
+    function incomeRowsDaily() {
+      normalizeIncomeEntries();
+      const groups = new Map();
+      state.incomeEntries.forEach((entry) => {
+        const group = groups.get(entry.day) || {
+          key: entry.day,
+          label: formatDayLabel(entry.day),
+          pnl: 0,
+          count: 0
+        };
+        group.pnl += entry.amount;
+        group.count += 1;
+        groups.set(entry.day, group);
+      });
+      return Array.from(groups.values()).sort((a, b) => b.key.localeCompare(a.key));
+    }
+
+    function incomeRowsMonthly() {
+      normalizeIncomeEntries();
+      const groups = new Map();
+      state.incomeEntries.forEach((entry) => {
+        const key = entry.month || entry.day.slice(0, 7);
+        const group = groups.get(key) || {
+          key,
+          label: formatMonthLabel(key),
+          pnl: 0,
+          count: 0
+        };
+        group.pnl += entry.amount;
+        group.count += 1;
+        groups.set(key, group);
+      });
+      return Array.from(groups.values()).sort((a, b) => b.key.localeCompare(a.key));
+    }
+
+    function addIncomeEntry(amount, source = "manual", updateStableBalance = false) {
+      const value = Number(amount);
+      if (!Number.isFinite(value) || value === 0) return false;
+      normalizeIncomeEntries();
+      const now = new Date();
+      if (updateStableBalance) {
+        const nextStable = (Number(state.stableBalance) || 0) + value;
+        state.stableBalance = String(Math.max(0, Math.round(nextStable * 100) / 100));
+        state.lastStableBalanceForIncome = state.stableBalance;
+        if ($("stableBalance")) $("stableBalance").value = state.stableBalance;
+      }
+      state.incomeEntries.push({
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        day: localDay(now),
+        month: localMonth(now),
+        amount: value,
+        source,
+        note: source === "auto" ? "stable balance increase" : "manual stable deposit",
+        createdAt: now.toISOString()
+      });
+      normalizeIncomeEntries();
+      persistState(false);
+      renderSavedStables();
+      renderPnlPanel(Number(state.lastTotalCapital) || 0);
+      queueDatabaseSave();
+      return true;
+    }
+
+    function queueStableIncomeDetection() {
+      if (!state.ownerMode) return;
+      clearTimeout(stableIncomeTimer);
+      stableIncomeTimer = setTimeout(() => {
+        const current = Number(state.stableBalance) || 0;
+        const previous = Number(state.lastStableBalanceForIncome);
+        if (!Number.isFinite(previous)) {
+          state.lastStableBalanceForIncome = state.stableBalance;
+          persistState(false);
+          queueDatabaseSave();
+          return;
+        }
+        if (current > previous) {
+          addIncomeEntry(Math.round((current - previous) * 100) / 100, "auto", false);
+        }
+        state.lastStableBalanceForIncome = state.stableBalance;
+        persistState(false);
+        queueDatabaseSave();
+      }, 1200);
+    }
+
+    function normalizePnlSnapshots() {
+      state.pnlSnapshots = (Array.isArray(state.pnlSnapshots) ? state.pnlSnapshots : [])
+        .filter((snapshot) => snapshot && snapshot.day && Number.isFinite(Number(snapshot.first)) && Number.isFinite(Number(snapshot.last)))
+        .map((snapshot) => ({
+          day: snapshot.day,
+          month: snapshot.month || snapshot.day.slice(0, 7),
+          first: Number(snapshot.first) || 0,
+          last: Number(snapshot.last) || 0,
+          high: Number(snapshot.high) || Number(snapshot.last) || 0,
+          low: Number(snapshot.low) || Number(snapshot.last) || 0,
+          walletUsd: Number(snapshot.walletUsd) || 0,
+          stables: Number(snapshot.stables) || 0,
+          btcPrice: Number(snapshot.btcPrice) || 0,
+          manualPnl: snapshot.manualPnl === undefined || snapshot.manualPnl === "" ? undefined : Number(snapshot.manualPnl),
+          manualUpdatedAt: snapshot.manualUpdatedAt || "",
+          updatedAt: snapshot.updatedAt || ""
+        }))
+        .sort((a, b) => a.day.localeCompare(b.day))
+        .slice(-370);
+    }
+
+    function pnlRowsDaily() {
+      normalizePnlSnapshots();
+      return state.pnlSnapshots.map((snapshot) => ({
+        key: snapshot.day,
+        label: formatDayLabel(snapshot.day),
+        first: snapshot.first,
+        last: snapshot.last,
+        autoPnl: snapshot.last - snapshot.first,
+        manual: Number.isFinite(Number(snapshot.manualPnl)),
+        pnl: Number.isFinite(Number(snapshot.manualPnl)) ? Number(snapshot.manualPnl) : snapshot.last - snapshot.first
+      })).reverse();
+    }
+
+    function pnlRowsMonthly() {
+      normalizePnlSnapshots();
+      const groups = new Map();
+      state.pnlSnapshots.forEach((snapshot) => {
+        const key = snapshot.month || snapshot.day.slice(0, 7);
+        const group = groups.get(key) || {
+          key,
+          label: formatMonthLabel(key),
+          first: snapshot.first,
+          last: snapshot.last,
+          pnl: 0,
+          startDay: snapshot.day,
+          endDay: snapshot.day
+        };
+        group.pnl += Number.isFinite(Number(snapshot.manualPnl)) ? Number(snapshot.manualPnl) : snapshot.last - snapshot.first;
+        if (snapshot.day < group.startDay) {
+          group.startDay = snapshot.day;
+          group.first = snapshot.first;
+        }
+        if (snapshot.day >= group.endDay) {
+          group.endDay = snapshot.day;
+          group.last = snapshot.last;
+        }
+        groups.set(key, group);
+      });
+      return Array.from(groups.values()).sort((a, b) => b.key.localeCompare(a.key));
+    }
+
+    function setPnlNumber(id, value) {
+      const element = $(id);
+      element.textContent = signedMoney(value);
+      element.className = value > 0 ? "positive" : value < 0 ? "negative" : "neutral";
+    }
+
+    function renderPnlPanel(currentTotal = 0) {
+      if (!$("pnlHistory")) return;
+      normalizeIncomeEntries();
+      const daily = incomeRowsDaily();
+      const monthly = incomeRowsMonthly();
+      const today = daily.find((row) => row.key === localDay());
+      const month = monthly.find((row) => row.key === localMonth());
+      setPnlNumber("todayPnl", today ? today.pnl : 0);
+      setPnlNumber("monthPnl", month ? month.pnl : 0);
+      $("todayPnlMeta").textContent = today ? `${today.count} stable entries` : "no stable deposits today";
+      $("monthPnlMeta").textContent = month ? `${month.count} stable entries` : "no stable deposits this month";
+      if ($("manualPnl")) $("manualPnl").value = "";
+      $("pnlDailyBtn").classList.toggle("active", state.pnlMode !== "monthly");
+      $("pnlMonthlyBtn").classList.toggle("active", state.pnlMode === "monthly");
+
+      const rows = state.pnlMode === "monthly" ? monthly.slice(0, 12) : daily.slice(0, 31);
+      const maxAbs = Math.max(1, ...rows.map((row) => Math.abs(row.pnl)));
+      $("pnlHistory").innerHTML = "";
+      if (!rows.length) {
+        const empty = document.createElement("div");
+        empty.className = "pnl-row";
+        empty.innerHTML = "<span class=\"pnl-date\">no data</span><span class=\"pnl-bar-track\"><i class=\"pnl-bar\" style=\"width: 0%\"></i></span><span class=\"pnl-value neutral\">$0</span>";
+        $("pnlHistory").appendChild(empty);
+        renderProfitDashboard();
+        return;
+      }
+
+      rows.forEach((row) => {
+        const item = document.createElement("div");
+        const width = Math.max(4, Math.round((Math.abs(row.pnl) / maxAbs) * 100));
+        const tone = row.pnl > 0 ? "positive" : row.pnl < 0 ? "negative" : "neutral";
+        item.className = "pnl-row";
+        item.innerHTML = `
+          <span class="pnl-date">${row.label}</span>
+          <span class="pnl-bar-track"><i class="pnl-bar ${row.pnl < 0 ? "down" : ""}" style="width: ${width}%"></i></span>
+          <span class="pnl-value ${tone}">${signedMoney(row.pnl)}</span>
+        `;
+        $("pnlHistory").appendChild(item);
+      });
+      renderProfitDashboard();
+    }
+
+    function renderProfitDashboard() {
+      if (!$("dashNet")) return;
+      const month = incomeRowsMonthly().find((row) => row.key === localMonth());
+      const earned = month ? month.pnl : 0;
+      const btcPnl = Number(state.lastBtcPnl) || 0;
+      const net = btcPnl + earned;
+      const avgEntry = Number(state.lastAvgBuyPrice) || 0;
+      const maxAbs = Math.max(1, Math.abs(btcPnl), Math.abs(earned));
+
+      setPnlNumber("dashNet", net);
+      setPnlNumber("dashBtcPnl", btcPnl);
+      setPnlNumber("dashEarned", earned);
+      $("dashAvgEntry").textContent = money(avgEntry);
+      $("dashAvgEntry").className = "neutral";
+      $("barBtc").style.width = `${Math.max(4, Math.round((Math.abs(btcPnl) / maxAbs) * 100))}%`;
+      $("barBtc").className = `pnl-bar ${btcPnl < 0 ? "down" : ""}`;
+      $("barEarned").style.width = `${Math.max(4, Math.round((Math.abs(earned) / maxAbs) * 100))}%`;
+      $("barEarned").className = `pnl-bar ${earned < 0 ? "down" : ""}`;
+      $("barBtcValue").textContent = signedMoney(btcPnl);
+      $("barBtcValue").className = btcPnl > 0 ? "positive" : btcPnl < 0 ? "negative" : "neutral";
+      $("barEarnedValue").textContent = signedMoney(earned);
+      $("barEarnedValue").className = earned > 0 ? "positive" : earned < 0 ? "negative" : "neutral";
+      $("performanceMeta").textContent = state.lastSyncedAt ? new Date(state.lastSyncedAt).toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "live";
+    }
+
+    function recordPnlSnapshot(totalCapital, walletUsd, btcPrice) {
+      normalizePnlSnapshots();
+      const now = new Date();
+      const day = localDay(now);
+      const month = localMonth(now);
+      let snapshot = state.pnlSnapshots.find((item) => item.day === day);
+      if (!snapshot) {
+        snapshot = {
+          day,
+          month,
+          first: totalCapital,
+          last: totalCapital,
+          high: totalCapital,
+          low: totalCapital
+        };
+        state.pnlSnapshots.push(snapshot);
+      }
+      snapshot.month = month;
+      snapshot.last = totalCapital;
+      snapshot.high = Math.max(Number(snapshot.high) || totalCapital, totalCapital);
+      snapshot.low = Math.min(Number(snapshot.low) || totalCapital, totalCapital);
+      snapshot.walletUsd = walletUsd;
+      snapshot.stables = Number(state.stableBalance) || 0;
+      snapshot.btcPrice = btcPrice;
+      snapshot.updatedAt = now.toISOString();
+      normalizePnlSnapshots();
+      persistState(false);
+      renderPnlPanel(totalCapital);
+      queueDatabaseSave();
+    }
+
+    function saveManualPnl() {
+      const raw = $("manualPnl").value;
+      const amount = Number(raw);
+      if (!Number.isFinite(amount) || amount === 0) {
+        setStatus("Впиши суму заносу стейблів.", true);
+        return;
+      }
+      if (addIncomeEntry(amount, "manual", true)) {
+        $("manualPnl").value = "";
+        setStatus("Занос стейблів додано.");
+      }
     }
 
     async function getBtcPrice() {
@@ -890,6 +1602,10 @@
         const pnl = usdValue - invested;
         const txCount = (chain.tx_count || 0) + (mempool.tx_count || 0);
         state.lastWalletUsd = usdValue;
+        state.lastTotalCapital = totalCapital;
+        state.lastBtcPnl = pnl;
+        state.lastAvgBuyPrice = avgBuyPrice;
+        state.lastInvested = invested;
         state.lastSyncedAt = new Date().toISOString();
         persistState(false);
 
@@ -907,6 +1623,9 @@
         $("txStatus").textContent = `${txs.length} latest txs`;
 
         renderRows(rows);
+        renderPnlPanel(totalCapital);
+        renderProfitDashboard();
+        queueDatabaseSave();
         setStatus("Готово. Це watch-only перегляд публічної адреси.");
       } catch (error) {
         setStatus(`Не вийшло синхронізувати: ${error.message}`, true);
@@ -1026,10 +1745,31 @@
     $("copyLinkBtn").addEventListener("click", copyShareLink);
     $("clearBtn").addEventListener("click", clearAll);
     $("editSetupBtn").addEventListener("click", editSetup);
+    $("manualPnlBtn").addEventListener("click", saveManualPnl);
+    $("pnlDailyBtn").addEventListener("click", () => {
+      state.pnlMode = "daily";
+      persistState(false);
+      renderPnlPanel(Number(state.lastTotalCapital) || 0);
+    });
+    $("pnlMonthlyBtn").addEventListener("click", () => {
+      state.pnlMode = "monthly";
+      persistState(false);
+      renderPnlPanel(Number(state.lastTotalCapital) || 0);
+    });
     window.addEventListener("hashchange", () => location.reload());
 
-    load();
-    if (state.btcAddress) syncWallet();
+    async function initApp() {
+      load();
+      await loadDatabaseState();
+      hydrateFields();
+      applyViewerMode();
+      renderWalletIdentity();
+      renderEmpty();
+      renderProfitDashboard();
+      if (state.btcAddress) await syncWallet();
+    }
+
+    initApp();
   </script>
 </body>
 </html>
