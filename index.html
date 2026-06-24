@@ -396,57 +396,6 @@
       white-space: nowrap;
     }
 
-    .account-table {
-      margin-top: 10px;
-      border: 1px solid var(--line);
-      background: #080a0c;
-      overflow: hidden;
-    }
-
-    .account-head,
-    .account-row {
-      display: grid;
-      grid-template-columns: 88px repeat(6, minmax(86px, 1fr));
-      gap: 8px;
-      align-items: center;
-      min-height: 38px;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--line);
-      font-size: 12px;
-    }
-
-    .account-head {
-      min-height: 32px;
-      color: var(--muted);
-      background: #0e1114;
-      font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .account-row:last-child {
-      border-bottom: 0;
-    }
-
-    .account-row:hover {
-      background: #11100a;
-    }
-
-    .account-row strong {
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .account-period {
-      color: var(--ink);
-      font-weight: 900;
-      white-space: nowrap;
-    }
-
-    .account-muted {
-      color: var(--muted);
-    }
-
     .pnl-tabs {
       display: flex;
       gap: 6px;
@@ -883,20 +832,6 @@
         grid-template-columns: 1fr 1fr;
       }
 
-      .account-head,
-      .account-row {
-        grid-template-columns: 76px 1fr 1fr 1fr;
-      }
-
-      .account-head > :nth-child(5),
-      .account-head > :nth-child(6),
-      .account-head > :nth-child(7),
-      .account-row > :nth-child(5),
-      .account-row > :nth-child(6),
-      .account-row > :nth-child(7) {
-        display: none;
-      }
-
       .row,
       .head {
         grid-template-columns: 84px 68px 1fr 88px;
@@ -940,16 +875,6 @@
 
       .performance-bar {
         grid-template-columns: 78px minmax(0, 1fr) 78px;
-      }
-
-      .account-head,
-      .account-row {
-        grid-template-columns: 70px 1fr 1fr;
-      }
-
-      .account-head > :nth-child(4),
-      .account-row > :nth-child(4) {
-        display: none;
       }
 
       .wallet-strip {
@@ -1005,6 +930,10 @@
           <div class="field">
             <label for="costBasis">Ручна сума вкладено, $</label>
             <input id="costBasis" type="number" min="0" step="0.01" placeholder="250">
+          </div>
+          <div class="field">
+            <label for="entryPrice">BTC entry price, $</label>
+            <input id="entryPrice" type="number" min="0" step="0.01" placeholder="64000">
           </div>
           <div class="field">
             <label for="stableBalance">Стейбли на біржі, $</label>
@@ -1097,17 +1026,6 @@
               <strong id="barEarnedValue">$0</strong>
             </div>
           </div>
-          <div class="account-table" id="accountTable">
-            <div class="account-head">
-              <span>period</span>
-              <span>stables</span>
-              <span>btc pnl</span>
-              <span>net</span>
-              <span>roi</span>
-              <span>capital</span>
-              <span>avg entry</span>
-            </div>
-          </div>
         </section>
 
         <section class="section pnl-panel">
@@ -1142,7 +1060,7 @@
           <section class="section">
             <div class="section-head">
               <h2>Transactions</h2>
-              <span class="status" id="txStatus">latest 25 BTC txs</span>
+              <span class="status" id="txStatus">all BTC txs</span>
             </div>
             <div class="table" id="txTable">
               <div class="head">
@@ -1175,6 +1093,7 @@
       label: "Suslik BTC Wallet",
       address: "bc1qdcfqtswwnwap64gc5auz8sf3mhkwfxwl6c4lyy",
       costBasis: "",
+      entryPrice: "",
       stableBalance: "30",
       notes: "BTC spot, без ф'ючів, без альтів."
     };
@@ -1183,6 +1102,7 @@
     state.walletLabel = state.walletLabel ?? builtInWallet.label;
     state.btcAddress = state.btcAddress ?? builtInWallet.address;
     state.costBasis = state.costBasis ?? builtInWallet.costBasis;
+    state.entryPrice = state.entryPrice ?? builtInWallet.entryPrice;
     state.stableBalance = state.stableBalance ?? builtInWallet.stableBalance;
     state.notes = state.notes ?? builtInWallet.notes;
     state.priceCache = state.priceCache ?? {};
@@ -1210,6 +1130,7 @@
         if (ownerKey) params.set("key", ownerKey);
         if (state.btcAddress) params.set("address", state.btcAddress);
         if (state.costBasis) params.set("cost", state.costBasis);
+        if (state.entryPrice) params.set("entry", state.entryPrice);
         if (state.stableBalance) params.set("stables", state.stableBalance);
         if (state.walletLabel) params.set("label", state.walletLabel);
         if (state.notes) params.set("notes", state.notes);
@@ -1256,6 +1177,7 @@
         walletLabel: state.walletLabel,
         btcAddress: state.btcAddress,
         costBasis: state.costBasis,
+        entryPrice: state.entryPrice,
         stableBalance: state.stableBalance,
         notes: state.notes,
         pnlSnapshots: state.pnlSnapshots,
@@ -1276,6 +1198,7 @@
       if (data.walletLabel !== undefined) state.walletLabel = String(data.walletLabel || builtInWallet.label);
       if (data.btcAddress !== undefined) state.btcAddress = String(data.btcAddress || builtInWallet.address);
       if (data.costBasis !== undefined) state.costBasis = String(data.costBasis || "");
+      if (data.entryPrice !== undefined) state.entryPrice = String(data.entryPrice || "");
       if (data.stableBalance !== undefined) state.stableBalance = String(data.stableBalance || "0");
       if (data.notes !== undefined) state.notes = String(data.notes || "");
       if (Array.isArray(data.pnlSnapshots)) state.pnlSnapshots = data.pnlSnapshots;
@@ -1367,6 +1290,7 @@
       state.walletLabel = $("walletLabel").value.trim();
       state.btcAddress = $("btcAddress").value.trim();
       state.costBasis = $("costBasis").value;
+      state.entryPrice = $("entryPrice").value;
       state.stableBalance = $("stableBalance").value;
       state.notes = $("notes").value.trim();
       persistState(Boolean(state.ownerMode));
@@ -1380,6 +1304,7 @@
       $("walletLabel").value = state.walletLabel;
       $("btcAddress").value = state.btcAddress;
       $("costBasis").value = state.costBasis;
+      $("entryPrice").value = state.entryPrice;
       $("stableBalance").value = state.stableBalance;
       $("notes").value = state.notes;
     }
@@ -1398,6 +1323,7 @@
       const params = new URLSearchParams(location.hash.slice(1));
       if (params.get("address")) state.btcAddress = params.get("address");
       if (params.get("cost")) state.costBasis = params.get("cost");
+      if (params.get("entry")) state.entryPrice = params.get("entry");
       if (params.get("stables")) state.stableBalance = params.get("stables");
       if (params.get("label")) state.walletLabel = params.get("label");
       if (params.get("notes")) state.notes = params.get("notes");
@@ -1814,53 +1740,6 @@
       $("barEarnedValue").textContent = signedMoney(earned);
       $("barEarnedValue").className = earned > 0 ? "positive" : earned < 0 ? "negative" : "neutral";
       $("performanceMeta").textContent = state.lastSyncedAt ? new Date(state.lastSyncedAt).toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "live";
-      renderAccountTable();
-    }
-
-    function renderAccountTable() {
-      if (!$("accountTable")) return;
-      const table = $("accountTable");
-      table.innerHTML = `
-        <div class="account-head">
-          <span>period</span>
-          <span>stables</span>
-          <span>btc pnl</span>
-          <span>net</span>
-          <span>roi</span>
-          <span>capital</span>
-          <span>avg entry</span>
-        </div>
-      `;
-
-      const incomeRows = state.pnlMode === "monthly" ? incomeRowsMonthly().slice(0, 12) : incomeRowsDaily().slice(0, 14);
-      const btcPnl = Number(state.lastBtcPnl) || 0;
-      const invested = Number(state.lastInvested) || Number(state.costBasis) || 0;
-      const capital = Number(state.lastTotalCapital) || (Number(state.lastWalletUsd) || 0) + (Number(state.stableBalance) || 0);
-      const avgEntry = Number(state.lastAvgBuyPrice) || 0;
-
-      const sourceRows = incomeRows.length ? incomeRows : [{
-        key: state.pnlMode === "monthly" ? localMonth() : localDay(),
-        label: state.pnlMode === "monthly" ? formatMonthLabel(localMonth()) : formatDayLabel(localDay()),
-        pnl: 0
-      }];
-
-      sourceRows.forEach((row, index) => {
-        const rowBtcPnl = index === 0 ? btcPnl : 0;
-        const net = row.pnl + rowBtcPnl;
-        const roi = invested > 0 ? (net / invested) * 100 : 0;
-        const item = document.createElement("div");
-        item.className = "account-row";
-        item.innerHTML = `
-          <span class="account-period">${row.label}</span>
-          <strong class="${row.pnl > 0 ? "positive" : row.pnl < 0 ? "negative" : "neutral"}">${signedMoney(row.pnl)}</strong>
-          <strong class="${rowBtcPnl > 0 ? "positive" : rowBtcPnl < 0 ? "negative" : "neutral"}">${signedMoney(rowBtcPnl)}</strong>
-          <strong class="${net > 0 ? "positive" : net < 0 ? "negative" : "neutral"}">${signedMoney(net)}</strong>
-          <span class="${roi > 0 ? "positive" : roi < 0 ? "negative" : "account-muted"}">${roi > 0 ? "+" : ""}${roi.toFixed(2)}%</span>
-          <span>${index === 0 ? money(capital) : "-"}</span>
-          <span>${index === 0 ? money(avgEntry) : "-"}</span>
-        `;
-        table.appendChild(item);
-      });
     }
 
     function recordPnlSnapshot(totalCapital, walletUsd, btcPrice) {
@@ -1981,7 +1860,7 @@
         const [price, addressData, txs] = await Promise.all([
           getBtcPrice(),
           fetchJson(`https://mempool.space/api/address/${encodeURIComponent(address)}`),
-          fetchJson(`https://mempool.space/api/address/${encodeURIComponent(address)}/txs`)
+          getAddressTransactions(address)
         ]);
 
         const chain = addressData.chain_stats || {};
@@ -1997,12 +1876,14 @@
         const autoBoughtSats = rows.reduce((sum, tx) => (
           tx.net > 0 ? sum + Math.abs(tx.net || 0) : sum
         ), 0);
+        const manualEntryPrice = Number(state.entryPrice) || 0;
         const manualInvested = Number(state.costBasis) || 0;
-        const invested = manualInvested || autoInvested;
+        const balanceBtc = balanceSats / satsPerBtc;
+        const invested = manualEntryPrice ? balanceBtc * manualEntryPrice : (manualInvested || autoInvested);
         const stables = Number(state.stableBalance) || 0;
         const totalCapital = usdValue + stables;
-        const avgBasisBtc = manualInvested ? (balanceSats / satsPerBtc) : (autoBoughtSats / satsPerBtc);
-        const avgBuyPrice = avgBasisBtc > 0 ? invested / avgBasisBtc : 0;
+        const avgBasisBtc = (manualEntryPrice || manualInvested) ? balanceBtc : (autoBoughtSats / satsPerBtc);
+        const avgBuyPrice = manualEntryPrice || (avgBasisBtc > 0 ? invested / avgBasisBtc : 0);
         const pnl = usdValue - invested;
         const txCount = (chain.tx_count || 0) + (mempool.tx_count || 0);
         state.lastWalletUsd = usdValue;
@@ -2024,7 +1905,7 @@
         $("pnlUsd").textContent = money(pnl);
         $("pnlUsd").className = pnl > 0 ? "positive" : pnl < 0 ? "negative" : "neutral";
         $("txCount").textContent = txCount;
-        $("txStatus").textContent = `${txs.length} latest txs`;
+        $("txStatus").textContent = `${txs.length} txs loaded`;
 
         renderRows(rows);
         renderPnlPanel(totalCapital);
@@ -2042,6 +1923,44 @@
       const response = await fetch(url);
       if (!response.ok) throw new Error(`API error ${response.status}`);
       return response.json();
+    }
+
+    async function getAddressTransactions(address) {
+      const encoded = encodeURIComponent(address);
+      const txs = [];
+
+      try {
+        const mempoolTxs = await fetchJson(`https://mempool.space/api/address/${encoded}/txs/mempool`);
+        txs.push(...mempoolTxs);
+      } catch {
+        // Mempool endpoint can be empty or temporarily unavailable; confirmed txs still matter most.
+      }
+
+      try {
+        let page = await fetchJson(`https://mempool.space/api/address/${encoded}/txs/chain`);
+        txs.push(...page);
+        let guard = 0;
+        while (page.length === 25 && guard < 40) {
+          const last = page[page.length - 1];
+          page = await fetchJson(`https://mempool.space/api/address/${encoded}/txs/chain/${last.txid}`);
+          if (!page.length) break;
+          txs.push(...page);
+          guard += 1;
+        }
+      } catch {
+        if (!txs.length) {
+          const fallback = await fetchJson(`https://mempool.space/api/address/${encoded}/txs`);
+          txs.push(...fallback);
+        }
+      }
+
+      const unique = new Map();
+      txs.forEach((tx) => unique.set(tx.txid, tx));
+      return Array.from(unique.values()).sort((a, b) => {
+        const aTime = a.status && a.status.block_time ? a.status.block_time : Number.MAX_SAFE_INTEGER;
+        const bTime = b.status && b.status.block_time ? b.status.block_time : Number.MAX_SAFE_INTEGER;
+        return bTime - aTime;
+      });
     }
 
     function normalizeTx(tx, address) {
@@ -2141,7 +2060,7 @@
       $("setupPanel").scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-    ["walletLabel", "btcAddress", "costBasis", "stableBalance", "notes"].forEach((id) => {
+    ["walletLabel", "btcAddress", "costBasis", "entryPrice", "stableBalance", "notes"].forEach((id) => {
       $(id).addEventListener("input", save);
       $(id).addEventListener("change", save);
     });
