@@ -396,6 +396,69 @@
       white-space: nowrap;
     }
 
+    .simulator {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .simulator-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .simulator-head strong {
+      color: var(--yellow);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .simulator input[type="range"] {
+      width: 100%;
+      min-height: 24px;
+      padding: 0;
+      accent-color: var(--yellow);
+      background: transparent;
+      border: 0;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .sim-cell {
+      min-height: 52px;
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+    }
+
+    .sim-cell span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .sim-cell strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 16px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
     .pnl-tabs {
       display: flex;
       gap: 6px;
@@ -832,6 +895,10 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      .sim-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
       .row,
       .head {
         grid-template-columns: 84px 68px 1fr 88px;
@@ -875,6 +942,10 @@
 
       .performance-bar {
         grid-template-columns: 78px minmax(0, 1fr) 78px;
+      }
+
+      .sim-grid {
+        grid-template-columns: 1fr;
       }
 
       .wallet-strip {
@@ -1024,6 +1095,31 @@
               <label>STABLES</label>
               <span class="pnl-bar-track"><i class="pnl-bar" id="barEarned" style="width: 0%"></i></span>
               <strong id="barEarnedValue">$0</strong>
+            </div>
+          </div>
+          <div class="simulator">
+            <div class="simulator-head">
+              <span>BTC price simulator</span>
+              <strong id="simPriceLabel">$0</strong>
+            </div>
+            <input id="priceSlider" type="range" min="10000" max="200000" step="500" value="60000">
+            <div class="sim-grid">
+              <div class="sim-cell">
+                <span>BTC value</span>
+                <strong id="simWalletValue">$0</strong>
+              </div>
+              <div class="sim-cell">
+                <span>BTC PNL</span>
+                <strong id="simBtcPnl">$0</strong>
+              </div>
+              <div class="sim-cell">
+                <span>total capital</span>
+                <strong id="simTotalCapital">$0</strong>
+              </div>
+              <div class="sim-cell">
+                <span>from entry</span>
+                <strong id="simFromEntry">0%</strong>
+              </div>
             </div>
           </div>
         </section>
@@ -1183,11 +1279,13 @@
         pnlSnapshots: state.pnlSnapshots,
         incomeEntries: state.incomeEntries,
         lastStableBalanceForIncome: state.lastStableBalanceForIncome,
+        lastBalanceBtc: state.lastBalanceBtc || 0,
         lastWalletUsd: state.lastWalletUsd || 0,
         lastTotalCapital: state.lastTotalCapital || 0,
         lastBtcPnl: state.lastBtcPnl || 0,
         lastAvgBuyPrice: state.lastAvgBuyPrice || 0,
         lastInvested: state.lastInvested || 0,
+        lastBtcPrice: state.lastBtcPrice || 0,
         lastSyncedAt: state.lastSyncedAt || "",
         updatedAt: new Date().toISOString()
       };
@@ -1204,11 +1302,13 @@
       if (Array.isArray(data.pnlSnapshots)) state.pnlSnapshots = data.pnlSnapshots;
       if (Array.isArray(data.incomeEntries)) state.incomeEntries = data.incomeEntries;
       if (data.lastStableBalanceForIncome !== undefined) state.lastStableBalanceForIncome = String(data.lastStableBalanceForIncome || "0");
+      state.lastBalanceBtc = Number(data.lastBalanceBtc) || state.lastBalanceBtc || 0;
       state.lastWalletUsd = Number(data.lastWalletUsd) || state.lastWalletUsd || 0;
       state.lastTotalCapital = Number(data.lastTotalCapital) || state.lastTotalCapital || 0;
       state.lastBtcPnl = Number(data.lastBtcPnl) || state.lastBtcPnl || 0;
       state.lastAvgBuyPrice = Number(data.lastAvgBuyPrice) || state.lastAvgBuyPrice || 0;
       state.lastInvested = Number(data.lastInvested) || state.lastInvested || 0;
+      state.lastBtcPrice = Number(data.lastBtcPrice) || state.lastBtcPrice || 0;
       state.lastSyncedAt = data.lastSyncedAt || state.lastSyncedAt || "";
     }
 
@@ -1740,6 +1840,42 @@
       $("barEarnedValue").textContent = signedMoney(earned);
       $("barEarnedValue").className = earned > 0 ? "positive" : earned < 0 ? "negative" : "neutral";
       $("performanceMeta").textContent = state.lastSyncedAt ? new Date(state.lastSyncedAt).toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "live";
+      syncPriceSliderDefaults();
+      renderPriceSimulation();
+    }
+
+    function syncPriceSliderDefaults() {
+      const slider = $("priceSlider");
+      if (!slider || slider.dataset.ready === "1") return;
+      const currentPrice = Number(state.lastBtcPrice) || (Number(state.lastBalanceBtc) ? Number(state.lastWalletUsd) / Number(state.lastBalanceBtc) : 0) || 60000;
+      const min = Math.max(1000, Math.floor(currentPrice * 0.35 / 500) * 500);
+      const max = Math.max(min + 5000, Math.ceil(currentPrice * 2.25 / 500) * 500);
+      slider.min = String(min);
+      slider.max = String(max);
+      slider.step = "500";
+      slider.value = String(Math.round(currentPrice / 500) * 500);
+      slider.dataset.ready = "1";
+    }
+
+    function renderPriceSimulation() {
+      if (!$("priceSlider")) return;
+      const price = Number($("priceSlider").value) || 0;
+      const balanceBtc = Number(state.lastBalanceBtc) || 0;
+      const stables = Number(state.stableBalance) || 0;
+      const entry = Number(state.lastAvgBuyPrice) || Number(state.entryPrice) || 0;
+      const invested = Number(state.lastInvested) || (entry * balanceBtc);
+      const walletValue = balanceBtc * price;
+      const btcPnl = walletValue - invested;
+      const totalCapital = walletValue + stables;
+      const fromEntry = entry > 0 ? ((price - entry) / entry) * 100 : 0;
+
+      $("simPriceLabel").textContent = money(price);
+      $("simWalletValue").textContent = money(walletValue);
+      $("simBtcPnl").textContent = signedMoney(btcPnl);
+      $("simBtcPnl").className = btcPnl > 0 ? "positive" : btcPnl < 0 ? "negative" : "neutral";
+      $("simTotalCapital").textContent = money(totalCapital);
+      $("simFromEntry").textContent = `${fromEntry > 0 ? "+" : ""}${fromEntry.toFixed(2)}%`;
+      $("simFromEntry").className = fromEntry > 0 ? "positive" : fromEntry < 0 ? "negative" : "neutral";
     }
 
     function recordPnlSnapshot(totalCapital, walletUsd, btcPrice) {
@@ -1886,11 +2022,13 @@
         const avgBuyPrice = manualEntryPrice || (avgBasisBtc > 0 ? invested / avgBasisBtc : 0);
         const pnl = usdValue - invested;
         const txCount = (chain.tx_count || 0) + (mempool.tx_count || 0);
+        state.lastBalanceBtc = balanceBtc;
         state.lastWalletUsd = usdValue;
         state.lastTotalCapital = totalCapital;
         state.lastBtcPnl = pnl;
         state.lastAvgBuyPrice = avgBuyPrice;
         state.lastInvested = invested;
+        state.lastBtcPrice = price.usd;
         state.lastSyncedAt = new Date().toISOString();
         persistState(false);
 
@@ -2069,6 +2207,7 @@
     $("clearBtn").addEventListener("click", clearAll);
     $("editSetupBtn").addEventListener("click", editSetup);
     $("manualPnlBtn").addEventListener("click", saveManualPnl);
+    $("priceSlider").addEventListener("input", renderPriceSimulation);
     $("calendarPrevBtn").addEventListener("click", () => {
       state.calendarMonth = shiftMonth(state.calendarMonth || localMonth(), -1);
       localStorage.setItem(`${storageKey}:calendarMonth`, state.calendarMonth);
