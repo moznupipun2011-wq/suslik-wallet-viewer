@@ -1130,10 +1130,10 @@
           </div>
           <div class="pnl-manual owner-only">
             <div class="field">
-              <label for="manualPnl" id="manualPnlLabel">deposit, $</label>
-              <input id="manualPnl" type="number" step="0.01" placeholder="+12 or -5">
+              <label for="manualPnl" id="manualPnlLabel">set day PNL, $</label>
+              <input id="manualPnl" type="number" step="0.01" placeholder="0, +12 or -5">
             </div>
-            <button class="ghost" id="manualPnlBtn" type="button">add</button>
+            <button class="ghost" id="manualPnlBtn" type="button">set</button>
           </div>
           <div class="pnl-list" id="pnlHistory"></div>
         </section>
@@ -1485,7 +1485,7 @@
     function setSelectedIncomeDay(day) {
       state.selectedIncomeDay = day;
       localStorage.setItem(`${storageKey}:selectedIncomeDay`, day);
-      if ($("manualPnlLabel")) $("manualPnlLabel").textContent = `deposit ${formatDayLabel(day)}, $`;
+      if ($("manualPnlLabel")) $("manualPnlLabel").textContent = `set PNL ${formatDayLabel(day)}, $`;
     }
 
     function normalizeIncomeEntries() {
@@ -1539,9 +1539,16 @@
       return Array.from(groups.values()).sort((a, b) => b.key.localeCompare(a.key));
     }
 
+    function incomeTotalForDay(day) {
+      normalizeIncomeEntries();
+      return state.incomeEntries
+        .filter((entry) => entry.day === day)
+        .reduce((sum, entry) => sum + entry.amount, 0);
+    }
+
     function addIncomeEntryForDay(day, amount, source = "manual", updateStableBalance = false) {
       const value = Number(amount);
-      if (!Number.isFinite(value) || value === 0) return false;
+      if (!Number.isFinite(value)) return false;
       normalizeIncomeEntries();
       const now = new Date();
       const entryDay = day || localDay(now);
@@ -1571,6 +1578,18 @@
 
     function addIncomeEntry(amount, source = "manual", updateStableBalance = false) {
       return addIncomeEntryForDay(localDay(), amount, source, updateStableBalance);
+    }
+
+    function setIncomeTotalForDay(day, targetAmount, updateStableBalance = true) {
+      const target = Number(targetAmount);
+      if (!Number.isFinite(target)) return false;
+      const current = incomeTotalForDay(day);
+      const diff = Math.round((target - current) * 100) / 100;
+      if (diff === 0) {
+        renderPnlPanel(Number(state.lastTotalCapital) || 0);
+        return true;
+      }
+      return addIncomeEntryForDay(day, diff, "set", updateStableBalance);
     }
 
     function queueStableIncomeDetection() {
@@ -1765,11 +1784,11 @@
       setSelectedIncomeDay(day);
       renderPnlPanel(Number(state.lastTotalCapital) || 0);
       if (!state.ownerMode) return;
-      const value = window.prompt(`PNL ${formatDayLabel(day)} in USD`, "");
+      const value = window.prompt(`Set PNL ${formatDayLabel(day)} in USD`, String(Math.round(incomeTotalForDay(day) * 100) / 100));
       if (value === null || value.trim() === "") return;
       const amount = Number(value);
-      if (!Number.isFinite(amount) || amount === 0) return;
-      addIncomeEntryForDay(day, amount, "manual", true);
+      if (!Number.isFinite(amount)) return;
+      setIncomeTotalForDay(day, amount, true);
     }
 
     function renderProfitDashboard() {
@@ -1878,11 +1897,11 @@
     function saveManualPnl() {
       const raw = $("manualPnl").value;
       const amount = Number(raw);
-      if (!Number.isFinite(amount) || amount === 0) {
+      if (!Number.isFinite(amount)) {
         setStatus("Впиши суму заносу стейблів.", true);
         return;
       }
-      if (addIncomeEntryForDay(selectedIncomeDay(), amount, "manual", true)) {
+      if (setIncomeTotalForDay(selectedIncomeDay(), amount, true)) {
         $("manualPnl").value = "";
         setStatus("Занос стейблів додано.");
       }
