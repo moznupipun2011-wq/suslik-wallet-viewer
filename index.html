@@ -519,10 +519,164 @@
 
     .pnl-list {
       display: grid;
-      gap: 6px;
+      gap: 8px;
       margin-top: 10px;
-      max-height: 260px;
-      overflow: auto;
+      overflow: hidden;
+    }
+
+    .calendar-summary {
+      display: grid;
+      gap: 7px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(circle at 22% 18%, rgba(255, 255, 255, .12), transparent 17%),
+        radial-gradient(circle at 76% 38%, rgba(245, 197, 66, .13), transparent 18%),
+        #080a0c;
+    }
+
+    .calendar-total {
+      font-size: 24px;
+      font-weight: 950;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .calendar-meter {
+      display: grid;
+      grid-template-columns: var(--pos, 50%) minmax(0, 1fr);
+      height: 4px;
+      overflow: hidden;
+      background: var(--panel-2);
+    }
+
+    .calendar-meter i:first-child {
+      background: var(--green);
+    }
+
+    .calendar-meter i:last-child {
+      background: var(--red);
+    }
+
+    .calendar-meter-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .calendar-monthbar {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 34px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .calendar-monthbar strong {
+      text-align: center;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .calendar-nav {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      color: var(--muted);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .calendar-weekdays,
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 4px;
+    }
+
+    .calendar-weekdays span {
+      color: var(--muted);
+      text-align: center;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .calendar-day {
+      position: relative;
+      min-height: 66px;
+      padding: 7px;
+      border: 1px solid #14171b;
+      background:
+        radial-gradient(circle at 50% 56%, rgba(255, 255, 255, .08), transparent 34%),
+        #090a0c;
+      overflow: hidden;
+    }
+
+    .calendar-day:not(.empty) {
+      cursor: pointer;
+    }
+
+    .calendar-day:not(.empty):hover,
+    .calendar-day.selected {
+      border-color: var(--yellow);
+      background:
+        radial-gradient(circle at 50% 56%, rgba(245, 197, 66, .18), transparent 42%),
+        #0e0f10;
+    }
+
+    .calendar-day.positive {
+      background:
+        radial-gradient(circle at 58% 56%, rgba(56, 217, 138, .38), transparent 34%),
+        #090d0b;
+    }
+
+    .calendar-day.negative {
+      background:
+        radial-gradient(circle at 58% 56%, rgba(255, 95, 95, .36), transparent 34%),
+        #0f0909;
+    }
+
+    .calendar-day.empty {
+      opacity: .35;
+    }
+
+    .calendar-num {
+      position: absolute;
+      left: 6px;
+      top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .calendar-value {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 16px 5px 8px;
+      font-size: 14px;
+      font-weight: 950;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      overflow-wrap: anywhere;
+    }
+
+    .calendar-streaks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .calendar-streaks strong {
+      color: var(--ink);
     }
 
     .pnl-row {
@@ -958,27 +1112,25 @@
 
         <section class="section pnl-panel">
           <div class="section-head">
-            <h2>Stable Income</h2>
-            <div class="pnl-tabs">
-              <button class="pnl-tab active" id="pnlDailyBtn" type="button">daily</button>
-              <button class="pnl-tab" id="pnlMonthlyBtn" type="button">monthly</button>
-            </div>
+            <h2>PNL Calendar</h2>
+            <span class="status" id="calendarMode">USD</span>
           </div>
-          <div class="pnl-grid">
-            <div class="pnl-card">
-              <span>today earned</span>
-              <strong id="todayPnl">$0</strong>
-              <small id="todayPnlMeta">stable deposits today</small>
+          <div class="calendar-summary">
+            <strong class="calendar-total" id="monthPnl">$0</strong>
+            <div class="calendar-meter" id="calendarMeter"><i></i><i></i></div>
+            <div class="calendar-meter-labels">
+              <span class="positive" id="calendarPositive">$0 / $0</span>
+              <span class="negative" id="calendarNegative">$0 / $0</span>
             </div>
-            <div class="pnl-card">
-              <span>month earned</span>
-              <strong id="monthPnl">$0</strong>
-              <small id="monthPnlMeta">stable deposits this month</small>
+            <div class="calendar-monthbar">
+              <button class="calendar-nav" id="calendarPrevBtn" type="button">‹</button>
+              <strong id="calendarMonthLabel">Month</strong>
+              <button class="calendar-nav" id="calendarNextBtn" type="button">›</button>
             </div>
           </div>
           <div class="pnl-manual owner-only">
             <div class="field">
-              <label for="manualPnl">stable deposit, $</label>
+              <label for="manualPnl" id="manualPnlLabel">deposit, $</label>
               <input id="manualPnl" type="number" step="0.01" placeholder="+12 or -5">
             </div>
             <button class="ghost" id="manualPnlBtn" type="button">add</button>
@@ -1038,6 +1190,8 @@
     state.incomeEntries = Array.isArray(state.incomeEntries) ? state.incomeEntries : [];
     state.lastStableBalanceForIncome = state.lastStableBalanceForIncome ?? state.stableBalance;
     state.pnlMode = state.pnlMode || "daily";
+    state.calendarMonth = state.calendarMonth || localStorage.getItem(`${storageKey}:calendarMonth`) || "";
+    state.selectedIncomeDay = state.selectedIncomeDay || localStorage.getItem(`${storageKey}:selectedIncomeDay`) || "";
     state.ownerMode = false;
     state.viewerMode = true;
 
@@ -1310,6 +1464,30 @@
       return `${value}.${year.slice(2)}`;
     }
 
+    function fullMonthLabel(month) {
+      const [year, value] = month.split("-").map(Number);
+      const date = new Date(year, value - 1, 1);
+      return date.toLocaleString("en-US", { month: "short", year: "numeric" });
+    }
+
+    function shiftMonth(month, delta) {
+      const [year, value] = (month || localMonth()).split("-").map(Number);
+      const date = new Date(year, value - 1 + delta, 1);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    function selectedIncomeDay() {
+      const selected = state.selectedIncomeDay || localDay();
+      const month = state.calendarMonth || localMonth();
+      return selected.startsWith(month) ? selected : `${month}-01`;
+    }
+
+    function setSelectedIncomeDay(day) {
+      state.selectedIncomeDay = day;
+      localStorage.setItem(`${storageKey}:selectedIncomeDay`, day);
+      if ($("manualPnlLabel")) $("manualPnlLabel").textContent = `deposit ${formatDayLabel(day)}, $`;
+    }
+
     function normalizeIncomeEntries() {
       state.incomeEntries = (Array.isArray(state.incomeEntries) ? state.incomeEntries : [])
         .filter((entry) => entry && entry.day && Number.isFinite(Number(entry.amount)))
@@ -1361,11 +1539,13 @@
       return Array.from(groups.values()).sort((a, b) => b.key.localeCompare(a.key));
     }
 
-    function addIncomeEntry(amount, source = "manual", updateStableBalance = false) {
+    function addIncomeEntryForDay(day, amount, source = "manual", updateStableBalance = false) {
       const value = Number(amount);
       if (!Number.isFinite(value) || value === 0) return false;
       normalizeIncomeEntries();
       const now = new Date();
+      const entryDay = day || localDay(now);
+      const entryMonth = entryDay.slice(0, 7);
       if (updateStableBalance) {
         const nextStable = (Number(state.stableBalance) || 0) + value;
         state.stableBalance = String(Math.max(0, Math.round(nextStable * 100) / 100));
@@ -1374,8 +1554,8 @@
       }
       state.incomeEntries.push({
         id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        day: localDay(now),
-        month: localMonth(now),
+        day: entryDay,
+        month: entryMonth,
         amount: value,
         source,
         note: source === "auto" ? "stable balance increase" : "manual stable deposit",
@@ -1387,6 +1567,10 @@
       renderPnlPanel(Number(state.lastTotalCapital) || 0);
       queueDatabaseSave();
       return true;
+    }
+
+    function addIncomeEntry(amount, source = "manual", updateStableBalance = false) {
+      return addIncomeEntryForDay(localDay(), amount, source, updateStableBalance);
     }
 
     function queueStableIncomeDetection() {
@@ -1481,43 +1665,111 @@
     function renderPnlPanel(currentTotal = 0) {
       if (!$("pnlHistory")) return;
       normalizeIncomeEntries();
-      const daily = incomeRowsDaily();
-      const monthly = incomeRowsMonthly();
-      const today = daily.find((row) => row.key === localDay());
-      const month = monthly.find((row) => row.key === localMonth());
-      setPnlNumber("todayPnl", today ? today.pnl : 0);
-      setPnlNumber("monthPnl", month ? month.pnl : 0);
-      $("todayPnlMeta").textContent = today ? `${today.count} stable entries` : "no stable deposits today";
-      $("monthPnlMeta").textContent = month ? `${month.count} stable entries` : "no stable deposits this month";
-      if ($("manualPnl")) $("manualPnl").value = "";
-      $("pnlDailyBtn").classList.toggle("active", state.pnlMode !== "monthly");
-      $("pnlMonthlyBtn").classList.toggle("active", state.pnlMode === "monthly");
+      state.calendarMonth = state.calendarMonth || localMonth();
+      localStorage.setItem(`${storageKey}:calendarMonth`, state.calendarMonth);
+      const selectedDay = selectedIncomeDay();
+      setSelectedIncomeDay(selectedDay);
+      const [year, month] = state.calendarMonth.split("-").map(Number);
+      const firstDate = new Date(year, month - 1, 1);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const firstOffset = (firstDate.getDay() + 6) % 7;
+      const byDay = new Map();
+      state.incomeEntries
+        .filter((entry) => entry.month === state.calendarMonth)
+        .forEach((entry) => {
+          const current = byDay.get(entry.day) || { amount: 0, count: 0 };
+          current.amount += entry.amount;
+          current.count += 1;
+          byDay.set(entry.day, current);
+        });
 
-      const rows = state.pnlMode === "monthly" ? monthly.slice(0, 12) : daily.slice(0, 31);
-      const maxAbs = Math.max(1, ...rows.map((row) => Math.abs(row.pnl)));
-      $("pnlHistory").innerHTML = "";
-      if (!rows.length) {
-        const empty = document.createElement("div");
-        empty.className = "pnl-row";
-        empty.innerHTML = "<span class=\"pnl-date\">no data</span><span class=\"pnl-bar-track\"><i class=\"pnl-bar\" style=\"width: 0%\"></i></span><span class=\"pnl-value neutral\">$0</span>";
-        $("pnlHistory").appendChild(empty);
-        renderProfitDashboard();
-        return;
+      const dayValues = Array.from(byDay.values()).map((row) => row.amount);
+      const monthTotal = dayValues.reduce((sum, value) => sum + value, 0);
+      const positive = dayValues.filter((value) => value > 0).reduce((sum, value) => sum + value, 0);
+      const negative = dayValues.filter((value) => value < 0).reduce((sum, value) => sum + Math.abs(value), 0);
+      const meterTotal = positive + negative || 1;
+      $("monthPnl").textContent = signedMoney(monthTotal);
+      $("monthPnl").className = `calendar-total ${monthTotal > 0 ? "positive" : monthTotal < 0 ? "negative" : "neutral"}`;
+      $("calendarPositive").textContent = `${money(positive)} / ${money(Math.max(positive, negative))}`;
+      $("calendarNegative").textContent = `${money(negative)} / ${money(Math.max(positive, negative))}`;
+      $("calendarMeter").style.setProperty("--pos", `${Math.round((positive / meterTotal) * 100)}%`);
+      $("calendarMonthLabel").textContent = `${fullMonthLabel(state.calendarMonth)} UTC+0`;
+
+      const weekdays = ["M", "T", "W", "T", "F", "S", "S"].map((day) => `<span>${day}</span>`).join("");
+      const cells = [];
+      for (let i = 0; i < firstOffset; i += 1) {
+        cells.push("<div class=\"calendar-day empty\"></div>");
+      }
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const key = `${state.calendarMonth}-${String(day).padStart(2, "0")}`;
+        const amount = byDay.get(key) ? byDay.get(key).amount : 0;
+        const tone = amount > 0 ? "positive" : amount < 0 ? "negative" : "neutral";
+        const selected = key === selectedDay ? " selected" : "";
+        cells.push(`
+          <button class="calendar-day ${tone}${selected}" type="button" data-day="${key}">
+            <span class="calendar-num">${day}</span>
+            <strong class="calendar-value">${amount === 0 ? "$0" : signedMoney(amount)}</strong>
+          </button>
+        `);
       }
 
-      rows.forEach((row) => {
-        const item = document.createElement("div");
-        const width = Math.max(4, Math.round((Math.abs(row.pnl) / maxAbs) * 100));
-        const tone = row.pnl > 0 ? "positive" : row.pnl < 0 ? "negative" : "neutral";
-        item.className = "pnl-row";
-        item.innerHTML = `
-          <span class="pnl-date">${row.label}</span>
-          <span class="pnl-bar-track"><i class="pnl-bar ${row.pnl < 0 ? "down" : ""}" style="width: ${width}%"></i></span>
-          <span class="pnl-value ${tone}">${signedMoney(row.pnl)}</span>
-        `;
-        $("pnlHistory").appendChild(item);
+      const bestStreak = bestPositiveStreak(state.calendarMonth, byDay, daysInMonth);
+      const currentStreak = currentPositiveStreak(state.calendarMonth, byDay);
+      $("pnlHistory").innerHTML = `
+        <div class="calendar-weekdays">${weekdays}</div>
+        <div class="calendar-grid">${cells.join("")}</div>
+        <div class="calendar-streaks">
+          <span>Current Positive Streak: <strong>${currentStreak}d</strong></span>
+          <span>Best Positive Streak: <strong>${bestStreak}d</strong></span>
+        </div>
+      `;
+      $("pnlHistory").querySelectorAll(".calendar-day[data-day]").forEach((button) => {
+        button.addEventListener("click", () => handleCalendarDayClick(button.dataset.day));
       });
       renderProfitDashboard();
+    }
+
+    function bestPositiveStreak(monthKey, byDay, daysInMonth) {
+      let best = 0;
+      let current = 0;
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const key = `${monthKey}-${String(day).padStart(2, "0")}`;
+        const value = byDay.get(key) ? byDay.get(key).amount : 0;
+        if (value > 0) {
+          current += 1;
+          best = Math.max(best, current);
+        } else {
+          current = 0;
+        }
+      }
+      return best;
+    }
+
+    function currentPositiveStreak(monthKey, byDay) {
+      const today = localDay();
+      const endDay = today.startsWith(monthKey) ? Number(today.slice(-2)) : new Date(Number(monthKey.slice(0, 4)), Number(monthKey.slice(5, 7)), 0).getDate();
+      let streak = 0;
+      for (let day = endDay; day >= 1; day -= 1) {
+        const key = `${monthKey}-${String(day).padStart(2, "0")}`;
+        const value = byDay.get(key) ? byDay.get(key).amount : 0;
+        if (value > 0) {
+          streak += 1;
+        } else {
+          break;
+        }
+      }
+      return streak;
+    }
+
+    function handleCalendarDayClick(day) {
+      setSelectedIncomeDay(day);
+      renderPnlPanel(Number(state.lastTotalCapital) || 0);
+      if (!state.ownerMode) return;
+      const value = window.prompt(`PNL ${formatDayLabel(day)} in USD`, "");
+      if (value === null || value.trim() === "") return;
+      const amount = Number(value);
+      if (!Number.isFinite(amount) || amount === 0) return;
+      addIncomeEntryForDay(day, amount, "manual", true);
     }
 
     function renderProfitDashboard() {
@@ -1630,7 +1882,7 @@
         setStatus("Впиши суму заносу стейблів.", true);
         return;
       }
-      if (addIncomeEntry(amount, "manual", true)) {
+      if (addIncomeEntryForDay(selectedIncomeDay(), amount, "manual", true)) {
         $("manualPnl").value = "";
         setStatus("Занос стейблів додано.");
       }
@@ -1879,13 +2131,15 @@
     $("clearBtn").addEventListener("click", clearAll);
     $("editSetupBtn").addEventListener("click", editSetup);
     $("manualPnlBtn").addEventListener("click", saveManualPnl);
-    $("pnlDailyBtn").addEventListener("click", () => {
-      state.pnlMode = "daily";
+    $("calendarPrevBtn").addEventListener("click", () => {
+      state.calendarMonth = shiftMonth(state.calendarMonth || localMonth(), -1);
+      localStorage.setItem(`${storageKey}:calendarMonth`, state.calendarMonth);
       persistState(false);
       renderPnlPanel(Number(state.lastTotalCapital) || 0);
     });
-    $("pnlMonthlyBtn").addEventListener("click", () => {
-      state.pnlMode = "monthly";
+    $("calendarNextBtn").addEventListener("click", () => {
+      state.calendarMonth = shiftMonth(state.calendarMonth || localMonth(), 1);
+      localStorage.setItem(`${storageKey}:calendarMonth`, state.calendarMonth);
       persistState(false);
       renderPnlPanel(Number(state.lastTotalCapital) || 0);
     });
