@@ -396,6 +396,57 @@
       white-space: nowrap;
     }
 
+    .account-table {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      background: #080a0c;
+      overflow: hidden;
+    }
+
+    .account-head,
+    .account-row {
+      display: grid;
+      grid-template-columns: 88px repeat(6, minmax(86px, 1fr));
+      gap: 8px;
+      align-items: center;
+      min-height: 38px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 12px;
+    }
+
+    .account-head {
+      min-height: 32px;
+      color: var(--muted);
+      background: #0e1114;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .account-row:last-child {
+      border-bottom: 0;
+    }
+
+    .account-row:hover {
+      background: #11100a;
+    }
+
+    .account-row strong {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .account-period {
+      color: var(--ink);
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .account-muted {
+      color: var(--muted);
+    }
+
     .pnl-tabs {
       display: flex;
       gap: 6px;
@@ -678,6 +729,20 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      .account-head,
+      .account-row {
+        grid-template-columns: 76px 1fr 1fr 1fr;
+      }
+
+      .account-head > :nth-child(5),
+      .account-head > :nth-child(6),
+      .account-head > :nth-child(7),
+      .account-row > :nth-child(5),
+      .account-row > :nth-child(6),
+      .account-row > :nth-child(7) {
+        display: none;
+      }
+
       .row,
       .head {
         grid-template-columns: 84px 68px 1fr 88px;
@@ -721,6 +786,16 @@
 
       .performance-bar {
         grid-template-columns: 78px minmax(0, 1fr) 78px;
+      }
+
+      .account-head,
+      .account-row {
+        grid-template-columns: 70px 1fr 1fr;
+      }
+
+      .account-head > :nth-child(4),
+      .account-row > :nth-child(4) {
+        display: none;
       }
 
       .wallet-strip {
@@ -866,6 +941,17 @@
               <label>STABLES</label>
               <span class="pnl-bar-track"><i class="pnl-bar" id="barEarned" style="width: 0%"></i></span>
               <strong id="barEarnedValue">$0</strong>
+            </div>
+          </div>
+          <div class="account-table" id="accountTable">
+            <div class="account-head">
+              <span>period</span>
+              <span>stables</span>
+              <span>btc pnl</span>
+              <span>net</span>
+              <span>roi</span>
+              <span>capital</span>
+              <span>avg entry</span>
             </div>
           </div>
         </section>
@@ -1457,6 +1543,53 @@
       $("barEarnedValue").textContent = signedMoney(earned);
       $("barEarnedValue").className = earned > 0 ? "positive" : earned < 0 ? "negative" : "neutral";
       $("performanceMeta").textContent = state.lastSyncedAt ? new Date(state.lastSyncedAt).toLocaleString("uk-UA", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : "live";
+      renderAccountTable();
+    }
+
+    function renderAccountTable() {
+      if (!$("accountTable")) return;
+      const table = $("accountTable");
+      table.innerHTML = `
+        <div class="account-head">
+          <span>period</span>
+          <span>stables</span>
+          <span>btc pnl</span>
+          <span>net</span>
+          <span>roi</span>
+          <span>capital</span>
+          <span>avg entry</span>
+        </div>
+      `;
+
+      const incomeRows = state.pnlMode === "monthly" ? incomeRowsMonthly().slice(0, 12) : incomeRowsDaily().slice(0, 14);
+      const btcPnl = Number(state.lastBtcPnl) || 0;
+      const invested = Number(state.lastInvested) || Number(state.costBasis) || 0;
+      const capital = Number(state.lastTotalCapital) || (Number(state.lastWalletUsd) || 0) + (Number(state.stableBalance) || 0);
+      const avgEntry = Number(state.lastAvgBuyPrice) || 0;
+
+      const sourceRows = incomeRows.length ? incomeRows : [{
+        key: state.pnlMode === "monthly" ? localMonth() : localDay(),
+        label: state.pnlMode === "monthly" ? formatMonthLabel(localMonth()) : formatDayLabel(localDay()),
+        pnl: 0
+      }];
+
+      sourceRows.forEach((row, index) => {
+        const rowBtcPnl = index === 0 ? btcPnl : 0;
+        const net = row.pnl + rowBtcPnl;
+        const roi = invested > 0 ? (net / invested) * 100 : 0;
+        const item = document.createElement("div");
+        item.className = "account-row";
+        item.innerHTML = `
+          <span class="account-period">${row.label}</span>
+          <strong class="${row.pnl > 0 ? "positive" : row.pnl < 0 ? "negative" : "neutral"}">${signedMoney(row.pnl)}</strong>
+          <strong class="${rowBtcPnl > 0 ? "positive" : rowBtcPnl < 0 ? "negative" : "neutral"}">${signedMoney(rowBtcPnl)}</strong>
+          <strong class="${net > 0 ? "positive" : net < 0 ? "negative" : "neutral"}">${signedMoney(net)}</strong>
+          <span class="${roi > 0 ? "positive" : roi < 0 ? "negative" : "account-muted"}">${roi > 0 ? "+" : ""}${roi.toFixed(2)}%</span>
+          <span>${index === 0 ? money(capital) : "-"}</span>
+          <span>${index === 0 ? money(avgEntry) : "-"}</span>
+        `;
+        table.appendChild(item);
+      });
     }
 
     function recordPnlSnapshot(totalCapital, walletUsd, btcPrice) {
