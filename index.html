@@ -262,6 +262,13 @@
       margin-top: 12px;
     }
 
+    .inline-action {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px;
+      gap: 8px;
+      align-items: end;
+    }
+
     .primary,
     .ghost {
       min-height: 38px;
@@ -936,6 +943,10 @@
         grid-template-columns: 1fr;
       }
 
+      .inline-action {
+        grid-template-columns: 1fr;
+      }
+
       .performance-grid {
         grid-template-columns: 1fr;
       }
@@ -1009,6 +1020,13 @@
           <div class="field">
             <label for="stableBalance">Стейбли на біржі, $</label>
             <input id="stableBalance" type="number" min="0" step="0.01" placeholder="30">
+          </div>
+          <div class="field owner-only">
+            <label for="btcBuyAmount">BTC buy from stables, $</label>
+            <div class="inline-action">
+              <input id="btcBuyAmount" type="number" min="0" step="0.01" placeholder="all stables">
+              <button class="ghost" id="btcBuyBtn" type="button">mark buy</button>
+            </div>
           </div>
           <div class="field">
             <label for="notes">Примітка</label>
@@ -1372,6 +1390,8 @@
       const amount = Number(value) || 0;
       return `${amount > 0 ? "+" : ""}${money(amount)}`;
     };
+
+    const roundMoney = (value) => String(Math.round((Number(value) || 0) * 100) / 100);
 
     const btc = (sats) => {
       const amount = (Number(sats) || 0) / satsPerBtc;
@@ -1922,6 +1942,46 @@
       }
     }
 
+    function markStableBtcBuy() {
+      const currentStables = Number(state.stableBalance) || 0;
+      const raw = $("btcBuyAmount").value.trim();
+      const requested = raw === "" ? currentStables : Number(raw);
+      if (!Number.isFinite(requested) || requested <= 0) {
+        setStatus("Enter stables amount used for BTC.", true);
+        return;
+      }
+      if (currentStables <= 0) {
+        setStatus("No stables to convert.", true);
+        return;
+      }
+
+      const amount = Math.min(requested, currentStables);
+      const entryPrice = Number(state.entryPrice) || 0;
+      const balanceBtc = Number(state.lastBalanceBtc) || 0;
+      const existingCost = Number(state.costBasis) || (Number(state.lastInvested) || (entryPrice && balanceBtc ? entryPrice * balanceBtc : 0));
+
+      state.costBasis = roundMoney(existingCost + amount);
+      state.entryPrice = "";
+      state.stableBalance = roundMoney(currentStables - amount);
+      state.lastStableBalanceForIncome = state.stableBalance;
+      state.lastInvested = Number(state.costBasis) || 0;
+      if (balanceBtc > 0) {
+        state.lastAvgBuyPrice = state.lastInvested / balanceBtc;
+        state.lastBtcPnl = (Number(state.lastWalletUsd) || 0) - state.lastInvested;
+      }
+
+      $("costBasis").value = state.costBasis;
+      $("entryPrice").value = state.entryPrice;
+      $("stableBalance").value = state.stableBalance;
+      $("btcBuyAmount").value = "";
+
+      persistState(Boolean(state.ownerMode));
+      renderSavedStables();
+      renderProfitDashboard();
+      queueDatabaseSave();
+      setStatus(`Marked BTC buy: ${money(amount)} moved from stables to BTC cost basis. Sync after BTC arrives.`);
+    }
+
     async function getBtcPrice() {
       try {
         const url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true";
@@ -2207,6 +2267,7 @@
     $("clearBtn").addEventListener("click", clearAll);
     $("editSetupBtn").addEventListener("click", editSetup);
     $("manualPnlBtn").addEventListener("click", saveManualPnl);
+    $("btcBuyBtn").addEventListener("click", markStableBtcBuy);
     $("priceSlider").addEventListener("input", renderPriceSimulation);
     $("calendarPrevBtn").addEventListener("click", () => {
       state.calendarMonth = shiftMonth(state.calendarMonth || localMonth(), -1);
