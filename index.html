@@ -698,114 +698,6 @@
       color: var(--ink);
     }
 
-    .work-panel {
-      margin-bottom: 10px;
-    }
-
-    .work-summary {
-      display: grid;
-      gap: 7px;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      background:
-        radial-gradient(circle at 18% 22%, rgba(245, 197, 66, .2), transparent 20%),
-        radial-gradient(circle at 82% 36%, rgba(255, 255, 255, .08), transparent 18%),
-        #080a0c;
-    }
-
-    .work-summary strong {
-      font-size: 24px;
-      line-height: 1;
-      color: var(--yellow);
-      font-weight: 950;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .work-calendar-meta {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      font-weight: 900;
-      text-transform: uppercase;
-    }
-
-    .work-editor {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 112px;
-      gap: 8px;
-      align-items: end;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--line);
-    }
-
-    .work-editor textarea {
-      min-height: 70px;
-    }
-
-    .work-actions {
-      display: grid;
-      gap: 8px;
-    }
-
-    .work-day-done {
-      border-color: rgba(245, 197, 66, .55);
-      background:
-        radial-gradient(circle at 56% 58%, rgba(245, 197, 66, .34), transparent 36%),
-        #0f0d08;
-    }
-
-    .work-day-today .calendar-num {
-      color: var(--yellow);
-    }
-
-    .work-value {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 17px 7px 8px;
-      color: var(--ink);
-      font-size: 12px;
-      font-weight: 900;
-      line-height: 1.2;
-      text-align: center;
-      overflow-wrap: anywhere;
-    }
-
-    .work-details {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .work-detail-card {
-      padding: 10px;
-      border: 1px solid var(--line);
-      background: #080a0c;
-    }
-
-    .work-detail-card strong,
-    .work-detail-card span {
-      display: block;
-    }
-
-    .work-detail-card strong {
-      color: var(--yellow);
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-
-    .work-detail-card span {
-      margin-top: 6px;
-      color: var(--ink);
-      font-size: 13px;
-      line-height: 1.45;
-      white-space: pre-wrap;
-    }
-
     .pnl-row {
       display: grid;
       grid-template-columns: 92px minmax(0, 1fr) 92px;
@@ -1047,8 +939,7 @@
         grid-template-columns: 80px minmax(0, 1fr) 82px;
       }
 
-      .pnl-manual,
-      .work-editor {
+      .pnl-manual {
         grid-template-columns: 1fr;
       }
 
@@ -1279,37 +1170,6 @@
           <div class="pnl-list" id="pnlHistory"></div>
         </section>
 
-        <section class="section work-panel">
-          <div class="section-head">
-            <h2>Work Calendar</h2>
-            <span class="status" id="workMonthStats">0 days</span>
-          </div>
-          <div class="work-summary">
-            <strong id="workMonthDone">0/0</strong>
-            <div class="work-calendar-meta">
-              <span id="workSelectedLabel">today</span>
-              <span id="workLatestLabel">no records</span>
-            </div>
-            <div class="calendar-monthbar">
-              <button class="calendar-nav" id="workPrevBtn" type="button">‹</button>
-              <strong id="workMonthLabel">Month</strong>
-              <button class="calendar-nav" id="workNextBtn" type="button">›</button>
-            </div>
-          </div>
-          <div class="work-editor owner-only">
-            <div class="field">
-              <label for="workTasks" id="workTasksLabel">work done today</label>
-              <textarea id="workTasks" placeholder="підлога, кухня, пил, сміття, ванна..."></textarea>
-            </div>
-            <div class="work-actions">
-              <button class="primary" id="workSaveBtn" type="button">save</button>
-              <button class="ghost" id="workClearBtn" type="button">clear</button>
-            </div>
-          </div>
-          <div class="pnl-list" id="workCalendar"></div>
-          <div class="work-details" id="workDetails"></div>
-        </section>
-
         <div class="split">
           <section class="section">
             <div class="section-head">
@@ -1362,13 +1222,10 @@
     state.priceCache = state.priceCache ?? {};
     state.pnlSnapshots = Array.isArray(state.pnlSnapshots) ? state.pnlSnapshots : [];
     state.incomeEntries = Array.isArray(state.incomeEntries) ? state.incomeEntries : [];
-    state.workEntries = Array.isArray(state.workEntries) ? state.workEntries : [];
     state.lastStableBalanceForIncome = state.lastStableBalanceForIncome ?? state.stableBalance;
     state.pnlMode = state.pnlMode || "daily";
     state.calendarMonth = state.calendarMonth || localStorage.getItem(`${storageKey}:calendarMonth`) || "";
     state.selectedIncomeDay = state.selectedIncomeDay || localStorage.getItem(`${storageKey}:selectedIncomeDay`) || "";
-    state.workMonth = state.workMonth || localStorage.getItem(`${storageKey}:workMonth`) || "";
-    state.selectedWorkDay = state.selectedWorkDay || localStorage.getItem(`${storageKey}:selectedWorkDay`) || "";
     state.ownerMode = false;
     state.viewerMode = true;
 
@@ -1439,7 +1296,6 @@
         notes: state.notes,
         pnlSnapshots: state.pnlSnapshots,
         incomeEntries: state.incomeEntries,
-        workEntries: state.workEntries,
         lastStableBalanceForIncome: state.lastStableBalanceForIncome,
         lastBalanceBtc: state.lastBalanceBtc || 0,
         lastWalletUsd: state.lastWalletUsd || 0,
@@ -1463,7 +1319,6 @@
       if (data.notes !== undefined) state.notes = String(data.notes || "");
       if (Array.isArray(data.pnlSnapshots)) state.pnlSnapshots = data.pnlSnapshots;
       if (Array.isArray(data.incomeEntries)) state.incomeEntries = data.incomeEntries;
-      if (Array.isArray(data.workEntries)) state.workEntries = data.workEntries;
       if (data.lastStableBalanceForIncome !== undefined) state.lastStableBalanceForIncome = String(data.lastStableBalanceForIncome || "0");
       state.lastBalanceBtc = Number(data.lastBalanceBtc) || state.lastBalanceBtc || 0;
       state.lastWalletUsd = Number(data.lastWalletUsd) || state.lastWalletUsd || 0;
@@ -1535,14 +1390,6 @@
       const amount = Number(value) || 0;
       return `${amount > 0 ? "+" : ""}${money(amount)}`;
     };
-
-    const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      "\"": "&quot;",
-      "'": "&#39;"
-    })[char]);
 
     const roundMoney = (value) => String(Math.round((Number(value) || 0) * 100) / 100);
 
@@ -1628,7 +1475,6 @@
       $("pnlUsd").className = "";
       $("txCount").textContent = "0";
       renderPnlPanel(stables);
-      renderWorkPanel();
       renderRows([]);
     }
 
@@ -1989,175 +1835,6 @@
       const amount = Number(value);
       if (!Number.isFinite(amount)) return;
       setIncomeTotalForDay(day, amount, true);
-    }
-
-    function selectedWorkDay() {
-      const selected = state.selectedWorkDay || localDay();
-      const month = state.workMonth || localMonth();
-      return selected.startsWith(month) ? selected : `${month}-01`;
-    }
-
-    function setSelectedWorkDay(day) {
-      state.selectedWorkDay = day;
-      localStorage.setItem(`${storageKey}:selectedWorkDay`, day);
-      if ($("workTasksLabel")) $("workTasksLabel").textContent = `work ${formatDayLabel(day)}`;
-    }
-
-    function normalizeWorkEntries() {
-      state.workEntries = (Array.isArray(state.workEntries) ? state.workEntries : [])
-        .filter((entry) => entry && entry.day && String(entry.tasks || "").trim())
-        .map((entry) => ({
-          day: entry.day,
-          month: entry.month || entry.day.slice(0, 7),
-          tasks: String(entry.tasks || "").trim(),
-          updatedAt: entry.updatedAt || entry.createdAt || ""
-        }))
-        .sort((a, b) => a.day.localeCompare(b.day))
-        .slice(-730);
-    }
-
-    function workEntryForDay(day) {
-      normalizeWorkEntries();
-      return state.workEntries.find((entry) => entry.day === day);
-    }
-
-    function upsertWorkEntry(day, tasks) {
-      const text = String(tasks || "").trim();
-      if (!day || !text) return false;
-      normalizeWorkEntries();
-      const now = new Date().toISOString();
-      const existing = state.workEntries.find((entry) => entry.day === day);
-      if (existing) {
-        existing.tasks = text;
-        existing.updatedAt = now;
-      } else {
-        state.workEntries.push({
-          day,
-          month: day.slice(0, 7),
-          tasks: text,
-          updatedAt: now
-        });
-      }
-      normalizeWorkEntries();
-      persistState(false);
-      renderWorkPanel();
-      queueDatabaseSave();
-      return true;
-    }
-
-    function clearWorkEntry(day) {
-      normalizeWorkEntries();
-      state.workEntries = state.workEntries.filter((entry) => entry.day !== day);
-      persistState(false);
-      renderWorkPanel();
-      queueDatabaseSave();
-    }
-
-    function compactWorkText(text) {
-      return String(text || "").replace(/\s+/g, " ").trim();
-    }
-
-    function renderWorkPanel() {
-      if (!$("workCalendar")) return;
-      normalizeWorkEntries();
-      state.workMonth = state.workMonth || localMonth();
-      localStorage.setItem(`${storageKey}:workMonth`, state.workMonth);
-      const selectedDay = selectedWorkDay();
-      setSelectedWorkDay(selectedDay);
-
-      const [year, month] = state.workMonth.split("-").map(Number);
-      const firstDate = new Date(year, month - 1, 1);
-      const daysInMonth = new Date(year, month, 0).getDate();
-      const firstOffset = (firstDate.getDay() + 6) % 7;
-      const today = localDay();
-      const entriesThisMonth = state.workEntries.filter((entry) => entry.month === state.workMonth);
-      const byDay = new Map(entriesThisMonth.map((entry) => [entry.day, entry]));
-      const latest = [...state.workEntries].sort((a, b) => b.day.localeCompare(a.day))[0];
-      const selectedEntry = workEntryForDay(selectedDay);
-
-      $("workMonthDone").textContent = `${entriesThisMonth.length}/${daysInMonth}`;
-      $("workMonthStats").textContent = `${entriesThisMonth.length} work days`;
-      $("workSelectedLabel").textContent = `selected ${formatDayLabel(selectedDay)}`;
-      $("workLatestLabel").textContent = latest ? `latest ${formatDayLabel(latest.day)}` : "no records";
-      $("workMonthLabel").textContent = fullMonthLabel(state.workMonth);
-      if ($("workTasks")) $("workTasks").value = selectedEntry ? selectedEntry.tasks : "";
-
-      const weekdays = ["M", "T", "W", "T", "F", "S", "S"].map((day) => `<span>${day}</span>`).join("");
-      const cells = [];
-      for (let i = 0; i < firstOffset; i += 1) {
-        cells.push("<div class=\"calendar-day empty\"></div>");
-      }
-      for (let day = 1; day <= daysInMonth; day += 1) {
-        const key = `${state.workMonth}-${String(day).padStart(2, "0")}`;
-        const entry = byDay.get(key);
-        const selected = key === selectedDay ? " selected" : "";
-        const todayClass = key === today ? " work-day-today" : "";
-        const doneClass = entry ? " work-day-done" : " neutral";
-        const shortText = entry ? compactWorkText(entry.tasks).slice(0, 42) : "";
-        cells.push(`
-          <button class="calendar-day${doneClass}${todayClass}${selected}" type="button" data-work-day="${key}">
-            <span class="calendar-num">${day}</span>
-            <strong class="work-value">${entry ? escapeHtml(shortText) : ""}</strong>
-          </button>
-        `);
-      }
-
-      $("workCalendar").innerHTML = `
-        <div class="calendar-weekdays">${weekdays}</div>
-        <div class="calendar-grid">${cells.join("")}</div>
-      `;
-      $("workCalendar").querySelectorAll(".calendar-day[data-work-day]").forEach((button) => {
-        button.addEventListener("click", () => handleWorkDayClick(button.dataset.workDay));
-      });
-
-      const recent = [...state.workEntries].sort((a, b) => b.day.localeCompare(a.day)).slice(0, 5);
-      const selectedHtml = selectedEntry ? `
-        <div class="work-detail-card">
-          <strong>${formatDayLabel(selectedEntry.day)}</strong>
-          <span>${escapeHtml(selectedEntry.tasks)}</span>
-        </div>
-      ` : `
-        <div class="work-detail-card">
-          <strong>${formatDayLabel(selectedDay)}</strong>
-          <span>Запису за цей день ще нема.</span>
-        </div>
-      `;
-      const recentHtml = recent
-        .filter((entry) => entry.day !== selectedDay)
-        .map((entry) => `
-          <div class="work-detail-card">
-            <strong>${formatDayLabel(entry.day)}</strong>
-            <span>${escapeHtml(entry.tasks)}</span>
-          </div>
-        `)
-        .join("");
-      $("workDetails").innerHTML = selectedHtml + recentHtml;
-    }
-
-    function handleWorkDayClick(day) {
-      setSelectedWorkDay(day);
-      renderWorkPanel();
-      if (state.ownerMode && $("workTasks")) $("workTasks").focus();
-    }
-
-    function saveWorkDay() {
-      if (!state.ownerMode) return;
-      const day = selectedWorkDay();
-      const tasks = $("workTasks").value.trim();
-      if (!tasks) {
-        setStatus("Впиши, що зробив по дому, або натисни clear для очищення дня.", true);
-        return;
-      }
-      if (upsertWorkEntry(day, tasks)) {
-        setStatus(`Work saved for ${formatDayLabel(day)}.`);
-      }
-    }
-
-    function clearSelectedWorkDay() {
-      if (!state.ownerMode) return;
-      const day = selectedWorkDay();
-      clearWorkEntry(day);
-      setStatus(`Work cleared for ${formatDayLabel(day)}.`);
     }
 
     function renderProfitDashboard() {
@@ -2592,8 +2269,6 @@
     $("manualPnlBtn").addEventListener("click", saveManualPnl);
     $("btcBuyBtn").addEventListener("click", markStableBtcBuy);
     $("priceSlider").addEventListener("input", renderPriceSimulation);
-    $("workSaveBtn").addEventListener("click", saveWorkDay);
-    $("workClearBtn").addEventListener("click", clearSelectedWorkDay);
     $("calendarPrevBtn").addEventListener("click", () => {
       state.calendarMonth = shiftMonth(state.calendarMonth || localMonth(), -1);
       localStorage.setItem(`${storageKey}:calendarMonth`, state.calendarMonth);
@@ -2606,18 +2281,6 @@
       persistState(false);
       renderPnlPanel(Number(state.lastTotalCapital) || 0);
     });
-    $("workPrevBtn").addEventListener("click", () => {
-      state.workMonth = shiftMonth(state.workMonth || localMonth(), -1);
-      localStorage.setItem(`${storageKey}:workMonth`, state.workMonth);
-      persistState(false);
-      renderWorkPanel();
-    });
-    $("workNextBtn").addEventListener("click", () => {
-      state.workMonth = shiftMonth(state.workMonth || localMonth(), 1);
-      localStorage.setItem(`${storageKey}:workMonth`, state.workMonth);
-      persistState(false);
-      renderWorkPanel();
-    });
     window.addEventListener("hashchange", () => location.reload());
 
     async function initApp() {
@@ -2628,7 +2291,6 @@
       renderWalletIdentity();
       renderEmpty();
       renderProfitDashboard();
-      renderWorkPanel();
       if (state.btcAddress) await syncWallet();
     }
 
