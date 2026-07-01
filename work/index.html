@@ -746,7 +746,7 @@
     function databasePayload() {
       normalizeEntries();
       return {
-        version: 1,
+        version: 2,
         title: "Suslik Work Log",
         subtitle: "домашня робота",
         workEntries: state.workEntries,
@@ -789,6 +789,7 @@
         return;
       }
       try {
+        setDbStatus("saving");
         const response = await fetch(dbEndpoint, {
           method: "PUT",
           headers: {
@@ -875,6 +876,17 @@
 
     function setPaidStatus(status) {
       state.selectedPaid = status === "paid" ? "paid" : "unpaid";
+      const day = selectedDay();
+      const entry = entryForDay(day);
+      if (state.ownerMode && entry) {
+        entry.paid = state.selectedPaid === "paid";
+        entry.updatedAt = new Date().toISOString();
+        persist();
+        render();
+        queueSave();
+        setStatus(`${formatDay(day)}: ${entry.paid ? "оплачено" : "неоплачено"}.`);
+        return;
+      }
       renderPayToggle();
     }
 
